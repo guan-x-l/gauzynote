@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gauzynote.system.mapper.TaskMapper">
+    <resultMap type="com.gauzynote.system.domain.entity.Task" id="TaskMap">
+        <result property="taskId" column="task_id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="taskTitle" column="task_title" jdbcType="VARCHAR"/>
+        <result property="taskContent" column="task_content" jdbcType="VARCHAR"/>
+        <result property="startTime" column="start_time" jdbcType="DATE"/>
+        <result property="endTime" column="end_time" jdbcType="DATE"/>
+        <result property="actualCompletionTime" column="actual_completion_time" jdbcType="DATE"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="priority" column="priority" jdbcType="VARCHAR"/>
+        <result property="sort" column="sort" jdbcType="INTEGER"/>
+        <result property="kanbanSort" column="kanban_sort" jdbcType="INTEGER"/>
+        <result property="ganttSort" column="gantt_sort" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="delFlag" column="del_flag" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="selectList" resultMap="TaskMap">
+        select task_id,
+               user_id,
+               task_title,
+               task_content,
+               start_time,
+               end_time,
+               actual_completion_time,
+               status,
+               priority,
+               sort,
+               kanban_sort,
+               gantt_sort,
+               create_time,
+               update_time,
+               del_flag
+        from task
+        where user_id = #{userId}
+          and del_flag = '0'
+        <if test="status != null and status != ''">
+            and status = #{status}
+        </if>
+        <if test="startDate != null and startDate != ''">
+            and end_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            and end_time &lt;= #{endDate}
+        </if>
+        order by sort asc, task_id asc
+    </select>
+
+    <select id="selectMaxSort" resultType="java.lang.Integer">
+        select max(sort)
+        from task
+        where user_id = #{userId}
+          and del_flag = '0'
+    </select>
+
+    <select id="selectMaxKanbanSort" resultType="java.lang.Integer">
+        select max(kanban_sort)
+        from task
+        where user_id = #{userId}
+          and del_flag = '0'
+    </select>
+
+    <select id="selectMaxGanttSort" resultType="java.lang.Integer">
+        select max(gantt_sort)
+        from task
+        where user_id = #{userId}
+          and del_flag = '0'
+    </select>
+
+    <select id="selectById" resultMap="TaskMap">
+        select task_id,
+               user_id,
+               task_title,
+               task_content,
+               start_time,
+               end_time,
+               actual_completion_time,
+               status,
+               priority,
+               sort,
+               kanban_sort,
+               gantt_sort,
+               create_time,
+               update_time,
+               del_flag
+        from task
+        where task_id = #{taskId}
+          and user_id = #{userId}
+          and del_flag = '0'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="taskId">
+        insert into task(
+        user_id,
+        task_title,
+        task_content,
+        start_time,
+        end_time,
+        actual_completion_time,
+        status,
+        priority,
+        sort,
+        kanban_sort,
+        gantt_sort,
+        create_time
+        ) values (
+        #{userId},
+        #{taskTitle},
+        #{taskContent},
+        #{startTime},
+        #{endTime},
+        #{actualCompletionTime},
+        #{status},
+        #{priority},
+        #{sort},
+        #{kanbanSort},
+        #{ganttSort},
+        sysdate()
+        )
+    </insert>
+
+    <update id="update">
+        update task
+        <set>
+            <if test="taskTitle != null">task_title = #{taskTitle},</if>
+            <if test="taskContent != null">task_content = #{taskContent},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="actualCompletionTime != null">actual_completion_time = #{actualCompletionTime},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="priority != null and priority != ''">priority = #{priority},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="kanbanSort != null">kanban_sort = #{kanbanSort},</if>
+            <if test="ganttSort != null">gantt_sort = #{ganttSort},</if>
+            update_time = sysdate()
+        </set>
+        where task_id = #{taskId}
+          and user_id = #{userId}
+          and del_flag = '0'
+    </update>
+
+    <update id="deleteById">
+        update task
+        set del_flag = '2',
+            update_time = sysdate()
+        where task_id = #{taskId}
+          and user_id = #{userId}
+    </update>
+
+    <update id="updateSort">
+        update task
+        set sort = #{sort},
+            update_time = sysdate()
+        where task_id = #{taskId}
+          and user_id = #{userId}
+          and del_flag = '0'
+    </update>
+
+    <update id="updateKanbanSort">
+        update task
+        set kanban_sort = #{kanbanSort},
+            update_time = sysdate()
+        where task_id = #{taskId}
+          and user_id = #{userId}
+          and del_flag = '0'
+    </update>
+
+    <update id="updateGanttSort">
+        update task
+        set gantt_sort = #{ganttSort},
+            update_time = sysdate()
+        where task_id = #{taskId}
+          and user_id = #{userId}
+          and del_flag = '0'
+    </update>
+</mapper>

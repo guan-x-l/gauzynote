@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gauzynote.system.mapper.OperLogMapper">
+    <resultMap type="com.gauzynote.common.domain.entity.OperLog" id="OperLogMap">
+        <result property="operId" column="oper_id" jdbcType="INTEGER"/>
+        <result property="origin" column="origin" jdbcType="VARCHAR"/>
+        <result property="operationName" column="operation_name" jdbcType="VARCHAR"/>
+        <result property="businessType" column="business_type" jdbcType="INTEGER"/>
+        <result property="requestMethod" column="request_method" jdbcType="VARCHAR"/>
+        <result property="requestUrl" column="request_url" jdbcType="VARCHAR"/>
+        <result property="uuid" column="uuid" jdbcType="VARCHAR"/>
+        <result property="requestParams" column="request_params" jdbcType="VARCHAR"/>
+        <result property="responseStatus" column="response_status" jdbcType="VARCHAR"/>
+        <result property="executionTime" column="execution_time" jdbcType="INTEGER"/>
+        <result property="responseData" column="response_data" jdbcType="VARCHAR"/>
+        <result property="ipAddress" column="ip_address" jdbcType="VARCHAR"/>
+        <result property="addressStatus" column="address_status" jdbcType="INTEGER"/>
+        <result property="addressMessage" column="address_message" jdbcType="VARCHAR"/>
+        <result property="lat" column="lat" jdbcType="VARCHAR"/>
+        <result property="lng" column="lng" jdbcType="VARCHAR"/>
+        <result property="nation" column="nation" jdbcType="VARCHAR"/>
+        <result property="province" column="province" jdbcType="VARCHAR"/>
+        <result property="city" column="city" jdbcType="VARCHAR"/>
+        <result property="district" column="district" jdbcType="VARCHAR"/>
+        <result property="adcode" column="adcode" jdbcType="VARCHAR"/>
+        <result property="currentUrl" column="current_url" jdbcType="VARCHAR"/>
+        <result property="host" column="host" jdbcType="VARCHAR"/>
+        <result property="requestOrigin" column="request_origin" jdbcType="VARCHAR"/>
+        <result property="referrer" column="referrer" jdbcType="VARCHAR"/>
+        <result property="ancestorOrigins" column="ancestor_origins" jdbcType="VARCHAR"/>
+        <result property="clientVersion" column="client_version" jdbcType="VARCHAR"/>
+        <result property="userAgent" column="user_agent" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+
+    <insert id="insert" keyProperty="operId" useGeneratedKeys="true">
+        insert into oper_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="origin != null and origin != ''">origin,</if>
+            <if test="operationName != null and operationName != ''">operation_name,</if>
+            <if test="businessType != null">business_type,</if>
+            <if test="requestMethod != null and requestMethod != ''">request_method,</if>
+            <if test="requestUrl != null and requestUrl != ''">request_url,</if>
+            <if test="uuid != null and uuid != ''">uuid,</if>
+            <if test="requestParams != null">request_params,</if>
+            <if test="responseStatus != null">response_status,</if>
+            <if test="executionTime != null">execution_time,</if>
+            <if test="responseData != null">response_data,</if>
+            <if test="ipAddress != null and ipAddress != ''">ip_address,</if>
+            <if test="addressStatus != null">address_status,</if>
+            <if test="addressMessage != null and addressMessage != ''">address_message,</if>
+            <if test="lat != null">lat,</if>
+            <if test="lng != null">lng,</if>
+            <if test="nation != null and nation != ''">nation,</if>
+            <if test="province != null and province != ''">province,</if>
+            <if test="city != null and city != ''">city,</if>
+            <if test="district != null and district != ''">district,</if>
+            <if test="adcode != null and adcode != ''">adcode,</if>
+            <if test="currentUrl != null and currentUrl != ''">current_url,</if>
+            <if test="host != null and host != ''">host,</if>
+            <if test="requestOrigin != null and requestOrigin != ''">request_origin,</if>
+            <if test="referrer != null and referrer != ''">referrer,</if>
+            <if test="ancestorOrigins != null">ancestor_origins,</if>
+            <if test="clientVersion != null and clientVersion != ''">client_version,</if>
+            <if test="userAgent != null and userAgent != ''">user_agent,</if>
+            create_time
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="origin != null and origin != ''">#{origin},</if>
+            <if test="operationName != null and operationName != ''">#{operationName},</if>
+            <if test="businessType != null">#{businessType},</if>
+            <if test="requestMethod != null and requestMethod != ''">#{requestMethod},</if>
+            <if test="requestUrl != null and requestUrl != ''">#{requestUrl},</if>
+            <if test="uuid != null and uuid != ''">#{uuid},</if>
+            <if test="requestParams != null">#{requestParams},</if>
+            <if test="responseStatus != null">#{responseStatus},</if>
+            <if test="executionTime != null">#{executionTime},</if>
+            <if test="responseData != null">#{responseData},</if>
+            <if test="ipAddress != null and ipAddress != ''">#{ipAddress},</if>
+            <if test="addressStatus != null">#{addressStatus},</if>
+            <if test="addressMessage != null and addressMessage != ''">#{addressMessage},</if>
+            <if test="lat != null">#{lat},</if>
+            <if test="lng != null">#{lng},</if>
+            <if test="nation != null and nation != ''">#{nation},</if>
+            <if test="province != null and province != ''">#{province},</if>
+            <if test="city != null and city != ''">#{city},</if>
+            <if test="district != null and district != ''">#{district},</if>
+            <if test="adcode != null and adcode != ''">#{adcode},</if>
+            <if test="currentUrl != null and currentUrl != ''">#{currentUrl},</if>
+            <if test="host != null and host != ''">#{host},</if>
+            <if test="requestOrigin != null and requestOrigin != ''">#{requestOrigin},</if>
+            <if test="referrer != null and referrer != ''">#{referrer},</if>
+            <if test="ancestorOrigins != null">#{ancestorOrigins},</if>
+            <if test="clientVersion != null and clientVersion != ''">#{clientVersion},</if>
+            <if test="userAgent != null and userAgent != ''">#{userAgent},</if>
+            sysdate()
+        </trim>
+    </insert>
+</mapper>
+

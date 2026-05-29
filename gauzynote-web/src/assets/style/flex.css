@@ -1,0 +1,221 @@
+/* Flex 容器基础类 */
+.flex {
+    display: flex;
+}
+
+.flex-inline {
+    display: inline-flex;
+}
+
+/* 方向控制 */
+.flex-row {
+    flex-direction: row;
+}
+
+.flex-row-reverse {
+    flex-direction: row-reverse;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.flex-col-reverse {
+    flex-direction: column-reverse;
+}
+
+/* 换行控制 */
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.flex-wrap-reverse {
+    flex-wrap: wrap-reverse;
+}
+
+.flex-nowrap {
+    flex-wrap: nowrap;
+}
+
+/* 主轴对齐方式 */
+.justify-start {
+    justify-content: flex-start;
+}
+
+.justify-end {
+    justify-content: flex-end;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.justify-around {
+    justify-content: space-around;
+}
+
+.justify-evenly {
+    justify-content: space-evenly;
+}
+
+/* 交叉轴对齐方式（单行） */
+.items-start {
+    align-items: flex-start;
+}
+
+.items-end {
+    align-items: flex-end;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.items-baseline {
+    align-items: baseline;
+}
+
+.items-stretch {
+    align-items: stretch;
+}
+
+/* 多轴对齐方式（多行） */
+.content-start {
+    align-content: flex-start;
+}
+
+.content-end {
+    align-content: flex-end;
+}
+
+.content-center {
+    align-content: center;
+}
+
+.content-between {
+    align-content: space-between;
+}
+
+.content-around {
+    align-content: space-around;
+}
+
+.content-stretch {
+    align-content: stretch;
+}
+
+/* 项目自身对齐方式 */
+.self-auto {
+    align-self: auto;
+}
+
+.self-start {
+    align-self: flex-start;
+}
+
+.self-end {
+    align-self: flex-end;
+}
+
+.self-center {
+    align-self: center;
+}
+
+.self-baseline {
+    align-self: baseline;
+}
+
+.self-stretch {
+    align-self: stretch;
+}
+
+/* 项目弹性控制 */
+.flex-1 {
+    flex: 1;
+}
+
+.flex-2 {
+    flex: 2;
+}
+
+.flex-3 {
+    flex: 3;
+}
+
+.flex-auto {
+    flex: auto;
+}
+
+.flex-initial {
+    flex: initial;
+}
+
+.flex-none {
+    flex: none;
+}
+
+/* 项目排序 */
+.order-first {
+    order: -1;
+}
+
+.order-last {
+    order: 1;
+}
+
+.order-0 {
+    order: 0;
+}
+
+.order-1 {
+    order: 1;
+}
+
+.order-2 {
+    order: 2;
+}
+
+.order-3 {
+    order: 3;
+}
+
+
+/* 子项目伸缩控制（flex-grow/flex-shrink/flex-basis） */
+.flex-grow-0 {
+    flex-grow: 0; /* 不拉伸 */
+}
+
+.flex-grow-1 {
+    flex-grow: 1; /* 均匀拉伸 */
+}
+/* 拉伸比例更高 */
+.flex-grow-2 {
+    flex-grow: 2;
+}
+
+.flex-shrink-0 {
+    flex-shrink: 0; /* 不收缩（防止内容挤压） */
+}
+
+.flex-shrink-1 {
+    flex-shrink: 1; /* 允许收缩 */
+}
+
+.flex-basis-auto {
+    flex-basis: auto; /* 基于内容计算宽度 */
+}
+
+.flex-basis-0 {
+    flex-basis: 0; /* 忽略内容宽度，按比例分配 */
+}
+
+/* 子项目文本溢出控制（配合 flex-shrink-0 使用） */
+.flex-item-ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

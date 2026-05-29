@@ -1,0 +1,98 @@
+/*fade*/
+/*渐隐退出*/
+.fade-out-enter-active,
+.fade-out-leave-active {
+    transition: opacity 0.3s ease;
+}
+
+.fade-out-enter-from,
+.fade-out-leave-to {
+    opacity: 0;
+}
+/* 渐隐出现，渐隐退出 */
+.fade-in-out-out-standard-enter-from,
+.fade-in-out-standard-appear-from {
+    opacity: 0;
+}
+
+.fade-in-out-standard-enter-to,
+.fade-in-out-standard-appear-to {
+    opacity: 1;
+}
+
+.fade-in-out-standard-enter-active,
+.fade-in-out-standard-appear-active {
+    transition: opacity .3s cubic-bezier(0.34, 0.69, 0.1, 1);
+}
+
+.fade-in-out-standard-leave-from {
+    opacity: 1;
+}
+
+.fade-in-out-standard-leave-to {
+    opacity: 0;
+}
+
+.fade-in-out-standard-leave-active {
+    transition: opacity .3s
+    cubic-bezier(0.34, 0.69, 0.1, 1);
+}
+
+.fade-in-out-enter-from,
+.fade-in-out-appear-from {
+    opacity: 0;
+}
+
+.fade-in-out-enter-to,
+.fade-in-out-appear-to {
+    opacity: 1;
+}
+
+.fade-in-out-enter-active,
+.fade-in-out-appear-active {
+    transition: opacity .1s linear;
+}
+
+.fade-in-out-leave-from {
+    opacity: 1;
+}
+
+.fade-in-out-leave-to {
+    opacity: 0;
+}
+
+.fade-in-out-leave-active {
+    transition: opacity .1s linear;
+}
+/*缩放*/
+/*缩放出现，渐隐退出*/
+.zoom-in-fade-out-enter-from,
+.zoom-in-fade-out-appear-from {
+    transform: scale(0.5, 0.5);
+    opacity: 0;
+}
+
+.zoom-in-fade-out-enter-to,
+.zoom-in-fade-out-appear-to {
+    transform: scale(1, 1);
+    opacity: 1;
+}
+
+.zoom-in-fade-out-enter-active,
+.zoom-in-fade-out-appear-active {
+    transition: opacity 0.3s cubic-bezier(0.3, 1.3, 0.3, 1), transform 0.3s cubic-bezier(0.3, 1.3, 0.3, 1);
+}
+
+.zoom-in-fade-out-leave-from {
+    transform: scale(1, 1);
+    opacity: 1;
+}
+
+.zoom-in-fade-out-leave-to {
+    transform: scale(0.5, 0.5);
+    opacity: 0;
+}
+
+.zoom-in-fade-out-leave-active {
+    transition: opacity 0.3s cubic-bezier(0.3, 1.3, 0.3, 1), transform 0.3s cubic-bezier(0.3, 1.3, 0.3, 1);
+}

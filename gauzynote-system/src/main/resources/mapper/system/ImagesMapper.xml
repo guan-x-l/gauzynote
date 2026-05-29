@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gauzynote.system.mapper.ImagesMapper">
+
+    <resultMap type="com.gauzynote.system.domain.entity.Images" id="ImagesMap">
+        <result property="imageId" column="image_id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="imageName" column="image_name" jdbcType="VARCHAR"/>
+        <result property="imagePath" column="image_path" jdbcType="VARCHAR"/>
+        <result property="imageType" column="image_type" jdbcType="VARCHAR"/>
+        <result property="imageSize" column="image_size" jdbcType="INTEGER"/>
+        <result property="storageEngine" column="storage_engine" jdbcType="VARCHAR"/>
+        <result property="uploadTime" column="upload_time" jdbcType="TIMESTAMP"/>
+        <result property="delFlag" column="del_flag" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="selectById" resultMap="ImagesMap">
+        select
+*
+        from images
+        where image_id = #{imageId}
+          and user_id = #{userId}
+          and del_flag = '0'
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="imageId" useGeneratedKeys="true">
+        insert into images(user_id,image_name,image_path,image_type,image_size,storage_engine,upload_time)
+        values (#{userId},#{imageName},#{imagePath},#{imageType},#{imageSize},#{storageEngine},sysdate())
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update images
+        <set>
+            <if test="imageName != null and imageName != ''">image_name = #{imageName},</if>
+            <if test="imagePath != null and imagePath != ''">image_path = #{imagePath},</if>
+            <if test="imageType != null and imageType != ''">image_type = #{imageType},</if>
+            <if test="imageSize != null">image_size = #{imageSize},</if>
+            <if test="storageEngine != null and storageEngine != ''">storage_engine = #{storageEngine},</if>
+        </set>
+        where image_id = #{imageId}
+    </update>
+
+    <!--通过主键删除-->
+    <update id="updateImageName">
+        update images SET image_name = #{imageName} where image_id = #{imageId} and user_id = #{userId}
+    </update>
+    <!--通过主键删除-->
+    <update id="deleteById">
+        update images
+        set del_flag = '2'
+        where image_id = #{imageId}
+          and user_id = #{userId}
+    </update>
+    <!--    通过主键删除-->
+    <update id="deleteByIds">
+        update images
+        set del_flag = '2'
+        where user_id = #{userId}
+        and image_id in
+        <foreach collection="imageIds" item="imageId" open="(" separator="," close=")">
+            #{imageId}
+        </foreach>
+    </update>
+</mapper>
+

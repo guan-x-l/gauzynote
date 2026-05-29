@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gauzynote.system.mapper.SysDictDataMapper">
+
+    <resultMap id="SysDictDataMap" type="com.gauzynote.system.domain.entity.SysDictData">
+        <id property="dictCode" column="dict_code" jdbcType="BIGINT"/>
+        <result property="dictSort" column="dict_sort" jdbcType="INTEGER"/>
+        <result property="dictLabel" column="dict_label" jdbcType="VARCHAR"/>
+        <result property="dictValue" column="dict_value" jdbcType="VARCHAR"/>
+        <result property="dictType" column="dict_type" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="cssClass" column="css_class" jdbcType="VARCHAR"/>
+        <result property="listClass" column="list_class" jdbcType="VARCHAR"/>
+        <result property="isDefault" column="is_default" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="selectSysDictDataVo">
+        select dict_code, dict_sort, dict_label, dict_value, dict_type, user_id, css_class, list_class, is_default, status,
+               create_by, create_time, update_by, update_time, remark
+        from sys_dict_data
+    </sql>
+
+    <select id="selectDictDataList" resultMap="SysDictDataMap">
+        <include refid="selectSysDictDataVo"/>
+        <where>
+            and (user_id is null or user_id = #{currentUserId})
+            <if test="dictData != null and dictData.dictType != null and dictData.dictType != ''">
+                and dict_type = #{dictData.dictType}
+            </if>
+            <if test="dictData != null and dictData.dictLabel != null and dictData.dictLabel != ''">
+                and dict_label like concat('%', #{dictData.dictLabel}, '%')
+            </if>
+            <if test="dictData != null and dictData.status != null and dictData.status != ''">
+                and status = #{dictData.status}
+            </if>
+            <if test="dictData != null and dictData.userId != null">
+                and user_id = #{dictData.userId}
+            </if>
+        </where>
+        order by dict_sort asc, dict_code asc
+    </select>
+
+    <select id="selectDictDataByType" resultMap="SysDictDataMap">
+        <include refid="selectSysDictDataVo"/>
+        where dict_type = #{dictType}
+          and status = '0'
+          and (user_id is null or user_id = #{currentUserId})
+        order by dict_sort asc, dict_code asc
+    </select>
+
+    <select id="selectDictDataById" resultMap="SysDictDataMap">
+        <include refid="selectSysDictDataVo"/>
+        where dict_code = #{dictCode}
+          and (user_id is null or user_id = #{currentUserId})
+        limit 1
+    </select>
+
+    <select id="selectDictDataByTypeAndValue" resultMap="SysDictDataMap">
+        <include refid="selectSysDictDataVo"/>
+        where dict_type = #{dictType}
+          and dict_value = #{dictValue}
+          and ((#{userId} is null and user_id is null) or user_id = #{userId})
+        limit 1
+    </select>
+
+    <select id="countDictDataByType" resultType="int" parameterType="String">
+        select count(1) from sys_dict_data where dict_type = #{dictType}
+    </select>
+
+    <insert id="insertDictData" parameterType="com.gauzynote.system.domain.entity.SysDictData" useGeneratedKeys="true" keyProperty="dictCode">
+        insert into sys_dict_data (
+            dict_sort, dict_label, dict_value, dict_type, user_id, css_class, list_class, is_default, status, create_by, create_time, remark
+        ) values (
+            #{dictSort}, #{dictLabel}, #{dictValue}, #{dictType}, #{userId}, #{cssClass}, #{listClass}, #{isDefault}, #{status}, #{createBy}, sysdate(), #{remark}
+        )
+    </insert>
+
+    <update id="updateDictData">
+        update sys_dict_data
+        <set>
+            <if test="dictData.dictSort != null">dict_sort = #{dictData.dictSort},</if>
+            <if test="dictData.dictLabel != null and dictData.dictLabel != ''">dict_label = #{dictData.dictLabel},</if>
+            <if test="dictData.dictValue != null and dictData.dictValue != ''">dict_value = #{dictData.dictValue},</if>
+            <if test="dictData.dictType != null and dictData.dictType != ''">dict_type = #{dictData.dictType},</if>
+            <if test="dictData.userId != null">user_id = #{dictData.userId},</if>
+            <if test="dictData.userId == null">user_id = null,</if>
+            <if test="dictData.cssClass != null">css_class = #{dictData.cssClass},</if>
+            <if test="dictData.listClass != null">list_class = #{dictData.listClass},</if>
+            <if test="dictData.isDefault != null and dictData.isDefault != ''">is_default = #{dictData.isDefault},</if>
+            <if test="dictData.status != null and dictData.status != ''">status = #{dictData.status},</if>
+            <if test="dictData.updateBy != null and dictData.updateBy != ''">update_by = #{dictData.updateBy},</if>
+            <if test="dictData.remark != null">remark = #{dictData.remark},</if>
+            update_time = sysdate()
+        </set>
+        where dict_code = #{dictData.dictCode}
+        <choose>
+            <when test="isAdmin">
+                and (user_id is null or user_id = #{currentUserId})
+            </when>
+            <otherwise>
+                and user_id = #{currentUserId}
+            </otherwise>
+        </choose>
+    </update>
+
+    <delete id="deleteDictDataById">
+        delete from sys_dict_data
+        where dict_code = #{dictCode}
+        <choose>
+            <when test="isAdmin">
+                and (user_id is null or user_id = #{currentUserId})
+            </when>
+            <otherwise>
+                and user_id = #{currentUserId}
+            </otherwise>
+        </choose>
+    </delete>
+</mapper>

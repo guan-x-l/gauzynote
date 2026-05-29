@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>gauzynote-application</artifactId>
+
+    <description>gauzynote-application</description>
+    <version>1.0</version>
+    <packaging>jar</packaging>
+    <!-- 继承本项目的父工程 -->
+    <parent>
+        <groupId>com.gauzynote</groupId>
+        <artifactId>gauzynote</artifactId>
+        <version>1.0</version>
+    </parent>
+
+    <dependencies>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-web</artifactId>-->
+<!--        </dependency>-->
+
+
+        <dependency>
+            <groupId>com.gauzynote</groupId>
+            <artifactId>gauzynote-system</artifactId>
+            <version>1.0</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.7.6</version>
+                <configuration>
+                    <mainClass>com.gauzynote.GauzyNoteApplication</mainClass> <!-- 指定启动类 -->
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <!--<build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.gauzynote.GauzyNoteApplicationtion</mainClass> &lt;!&ndash; 指定启动类全路径 &ndash;&gt;
+                </configuration>
+           &lt;!&ndash;     <version>${spring-boot.version}</version>
+                <configuration>
+                    <mainClass>com.gauzynote.GauzyNoteApplicationtion</mainClass>
+                    <skip>true</skip>
+                </configuration>&ndash;&gt;
+                &lt;!&ndash;<executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>&ndash;&gt;
+            </plugin>
+        </plugins>
+    </build>-->
+</project>
