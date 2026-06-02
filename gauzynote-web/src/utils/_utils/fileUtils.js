@@ -126,7 +126,7 @@ export async function urlToFile(url, options = {}) {
  */
 export function validateFile(file, fileTypes, maxSize) {
     // 检查类型
-    if (!fileTypes.includes(file.type)) {
+    if (fileTypes.length && !fileTypes.includes(file.type)) {
         return {
             status: false,
             message:  `不支持的文件类型，仅支持: ${fileTypes.map(type => type.split('/')[1]).join(', ')}`

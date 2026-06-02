@@ -5,9 +5,9 @@ import {getFileNameWithoutExtension} from "@/utils/_utils/fileUtils.js";
 const props = defineProps({
   asset: Object
 })
-const imageName = computed(()=>{
-  if(props.asset && props.asset.imageName){
-    return getFileNameWithoutExtension(props.asset.imageName)
+const displayName = computed(()=>{
+  if(props.asset && props.asset.fileName){
+    return getFileNameWithoutExtension(props.asset.fileName)
   }
 })
 </script>
@@ -16,13 +16,8 @@ const imageName = computed(()=>{
 <div class="toolbar-container">
   <div>
   </div>
-  <div class="toolbar-title hide-scrollbar">{{imageName}}</div>
+  <div class="toolbar-title hide-scrollbar">{{displayName}}</div>
   <div>
-<!--    <m-button type="base" size="small" shape="square">
-      <template #icon>
-        <icon-more-vertical size="20"></icon-more-vertical>
-      </template>
-    </m-button>-->
   </div>
 </div>
 </template>

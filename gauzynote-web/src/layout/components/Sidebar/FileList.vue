@@ -15,13 +15,13 @@ import {
 } from "@/utils/index.js";
 import {Message, MLoading} from "@/components/index.js";
 import {useWindowSize} from "@/hooks/index.js";
-import {handleUploadImageList} from "@/biz/upload.js";
+import {handleUploadFileList} from "@/biz/upload.js";
 import {NodeType} from "@/enum/index.js";
-import {getImageTab, getNoteTab} from "@/biz/tabs.js";
+import {getFileTab, getNoteTab} from "@/biz/tabs.js";
 import {useI18n} from "vue-i18n";
 import Divider from "@/components/base/Divider/Divider.vue";
 import Tooltip from "@/components/base/Tooltip/Tooltip.vue";
-import {uploadImage, uploadNetworkImage} from "@/api/upload.js";
+import {uploadNetworkImage} from "@/api/upload.js";
 import {$t} from "@/locales/index.js";
 
 
@@ -90,8 +90,8 @@ function handleTreeSelect(nodeItem) {
     if (tab.path === activeTab.value.path) return
     replaceCurrentTab(tab)
     router.push(tab.path)
-  } else if (NodeType.isImage(nodeItem.nodeType)){
-    const tab = getImageTab(nodeItem)
+  } else if (NodeType.isFile(nodeItem.nodeType)){
+    const tab = getFileTab(nodeItem)
     replaceCurrentTab(tab)
     router.push(tab.path)
   }
@@ -205,8 +205,8 @@ async function handleTreeNodeDropdownSelect(key, nodeItem) {
     for (let i = 0; i < resourceNodeList.value.length; i++) {
       if (resourceNodeList.value[i].nodeId === nodeId) {
         let tab = getNoteTab(resourceNodeList.value[i])
-        if (NodeType.isImage(resourceNodeList.value[i].nodeType)){
-          tab = getImageTab(resourceNodeList.value[i])
+        if (NodeType.isFile(resourceNodeList.value[i].nodeType)){
+          tab = getFileTab(resourceNodeList.value[i])
         }
         addViewAsTab(tab)
         router.push(tab.path)
@@ -244,7 +244,7 @@ async function handleTreeNodeDropdownSelect(key, nodeItem) {
     addFolder(nodeItem)
   } else if (key === 'rename'){
     renameNodeId.value = nodeId
-    if (NodeType.isImage(nodeType)){
+    if (NodeType.isFile(nodeType)){
       renameNodeName.value = getFileNameWithoutExtension(nodeName)
     } else {
       renameNodeName.value = nodeName
@@ -280,7 +280,7 @@ const handleBlurRename = throttle((value) => {
     renameNodeId.value = null
     return
   }
-  let extension = NodeType.isImage(currentNode.nodeType) ? getFileExtension(currentNode.nodeName, true, true) : ''
+  let extension = NodeType.isFile(currentNode.nodeType) ? getFileExtension(currentNode.nodeName, true, true) : ''
   const data = {
     nodeId: renameNodeId.value,
     nodeName: value + extension
@@ -352,7 +352,7 @@ async function handleDrop(e, dragNode, dropNode) {
   if (dt.files.length > 0) {
     const load = MLoading.show()
     const id = dragenterNodeId.value === '0' ? null : dragenterNodeId.value
-    await handleUploadImageList(dt.files, id)
+    await handleUploadFileList(dt.files, id)
     clearDragenterNodeId()
     await updateResourceNodeData();
     load.close()
@@ -503,9 +503,9 @@ function handleDragEnd() {
                 :highlight="dragenterNodeId === node.nodeId"
               >
                 <m-input draggable="false" ref="renameInputRef" class="rename" size="fit" @blur="handleBlurRename" @pressEnter="handleBlurRename" v-if="renameNodeId === node.nodeId" v-model="renameNodeName"  autocomplete="off" spellcheck="false" @click.stop @keyup.space.stop/>
-                <span class="text-ellipsis" v-else-if="NodeType.isImage(node.nodeType)">{{getFileNameWithoutExtension(node.nodeName)}}</span>
+                <span class="text-ellipsis" v-else-if="NodeType.isFile(node.nodeType)">{{getFileNameWithoutExtension(node.nodeName)}}</span>
                 <span class="text-ellipsis" v-else>{{node.nodeName}}</span>
-                <template #suffix v-if="NodeType.isImage(node.nodeType)">
+                <template #suffix v-if="NodeType.isFile(node.nodeType)">
                   <m-tag size="mini">{{ getFileExtension(node.nodeName) }}</m-tag>
                 </template>
               </tree-node-item>

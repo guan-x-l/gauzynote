@@ -45,15 +45,14 @@ public class UploadController {
     public AjaxResult uploadImage(@RequestParam("file") MultipartFile file,
                                   @RequestParam(value = "parentNodeId", required = false) Long parentNodeId) {
         try {
-            // 调用业务Service处理上传逻辑
             Map<String, Object> result = imageUploadService.upload(file, parentNodeId);
             return AjaxResult.success(result);
         } catch (ServiceException e) {
-            log.error(MessageUtils.message("image.upload.fail"), e.getMessage(), e);
+            log.error(MessageUtils.message("file.upload.fail"), e.getMessage(), e);
             return AjaxResult.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
-            log.error(MessageUtils.message("image.upload.exception"), e.getMessage(), e);
-            return AjaxResult.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), MessageUtils.message("image.upload.fail"));
+            log.error(MessageUtils.message("file.upload.exception"), e.getMessage(), e);
+            return AjaxResult.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), MessageUtils.message("file.upload.fail"));
         }
     }
 
@@ -61,26 +60,21 @@ public class UploadController {
     public AjaxResult uploadNetworkImage(@RequestParam("fileUrl") String fileUrl,
                                   @RequestParam(value = "parentNodeId", required = false) Long parentNodeId) {
         try {
-            // 调用业务Service处理上传逻辑
             Map<String, Object> result = imageUploadService.upload(convertUrlToMultipartFile(fileUrl), parentNodeId);
             return AjaxResult.success(result);
         } catch (ServiceException e) {
-            log.error(MessageUtils.message("image.upload.fail"), e.getMessage(), e);
+            log.error(MessageUtils.message("file.upload.fail"), e.getMessage(), e);
             return AjaxResult.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
-            log.error(MessageUtils.message("image.upload.exception"), e.getMessage(), e);
-            return AjaxResult.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), MessageUtils.message("image.upload.fail"));
+            log.error(MessageUtils.message("file.upload.exception"), e.getMessage(), e);
+            return AjaxResult.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), MessageUtils.message("file.upload.fail"));
         }
     }
 
-//    @PostMapping("/file")
-    /**
-     * @deprecated
-     */
+    @PostMapping("/file")
     public AjaxResult uploadFile(@RequestParam("file") MultipartFile file,
                                   @RequestParam(value = "parentNodeId", required = false) Long parentNodeId) {
         try {
-            // 调用业务Service处理上传逻辑
             Map<String, Object> result = fileUploadService.upload(file, parentNodeId);
             return AjaxResult.success(result);
         } catch (ServiceException e) {

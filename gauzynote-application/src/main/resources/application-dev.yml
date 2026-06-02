@@ -21,7 +21,7 @@ spring:
     password:
   sql:
     init:
-      mode: ALWAYS  # 开发环境用always，生产环境建议改为never；ALWAYS：始终初始化数据库;NEVER: 不加载。
+      mode: NEVER  # 开发环境用always，生产环境建议改为never；ALWAYS：始终初始化数据库;NEVER: 不加载。
       schema-locations: classpath:schema.sql  # 建表脚本
       data-locations: classpath:data.sql      # 插数据脚本
       encoding: UTF-8

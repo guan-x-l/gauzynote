@@ -55,7 +55,7 @@ function handleTabClick(tab) {
               @click.middle="deleteTab(item)"
               :title="item.title"
           >
-            <div class="tabs-pages__item-title flex-1 text-ellipsis" v-if="NodeType.isImage(item.nodeType)">
+            <div class="tabs-pages__item-title flex-1 text-ellipsis" v-if="NodeType.isFile(item.nodeType)">
               <icon-image style="margin-right: 4px" />{{ getFileNameWithoutExtension(item.title) }}
             </div>
             <div class="tabs-pages__item-title flex-1 text-ellipsis" v-else>{{ item.title }}</div>

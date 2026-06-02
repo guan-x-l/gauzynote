@@ -104,7 +104,11 @@ export default defineConfig({
     https: false, // 是否开启 https
     cors: true, // 为开发服务器配置 CORS。默认启用并允许任何源
     proxy: { // 为开发服务器配置自定义代理规则 （反向代理）
-
+      '/service/gauzynote': {
+        target: 'http://localhost:8989', //代理接口
+        changeOrigin: true,
+        secure: false,
+      },
     }
   },
 })

@@ -8,20 +8,20 @@ SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
--- Table structure for images
+-- Table structure for file
 -- ----------------------------
-CREATE TABLE IF NOT EXISTS `images` (
-                                        `image_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '图片唯一标识ID',
+CREATE TABLE IF NOT EXISTS `file` (
+                                        `file_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '文件唯一标识ID',
     `user_id` bigint(20) DEFAULT NULL COMMENT '用户id',
-    `image_name` varchar(255) DEFAULT NULL COMMENT '图片文件名（存在重复）',
-    `image_path` varchar(3000) DEFAULT NULL COMMENT '图片在服务器的存储路径',
-    `image_type` varchar(10) DEFAULT NULL COMMENT '图片文件类型（如jpeg、png）',
-    `image_size` int(11) DEFAULT NULL COMMENT '图片文件大小（单位：字节）',
+    `file_name` varchar(255) DEFAULT NULL COMMENT '文件名（存在重复）',
+    `file_path` varchar(3000) DEFAULT NULL COMMENT '在服务器的存储路径',
+    `file_type` varchar(10) DEFAULT NULL COMMENT '文件类型',
+    `file_size` int(11) DEFAULT NULL COMMENT '文件大小（单位：字节）',
     `storage_engine` varchar(255) DEFAULT NULL COMMENT '存储引擎（local：本地存储，oss：对象存储等）',
     `upload_time` datetime DEFAULT NULL COMMENT '上传时间',
     `del_flag` char(1) DEFAULT '0' COMMENT '删除标志（0代表存在 2代表删除）',
-    PRIMARY KEY (`image_id`) USING BTREE
-    ) ENGINE=InnoDB AUTO_INCREMENT=90 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='图片表';
+    PRIMARY KEY (`file_id`) USING BTREE
+    ) ENGINE=InnoDB AUTO_INCREMENT=90 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='文件表';
 
 
 -- ----------------------------
@@ -165,7 +165,7 @@ CREATE TABLE IF NOT EXISTS `sys_resource_node` (
     `parent_id` bigint(20) DEFAULT NULL COMMENT '父节点ID',
     `related_id` bigint(20) DEFAULT NULL COMMENT '关联的具体文件ID（仅文件类型节点有效）',
     `user_id` bigint(20) NOT NULL COMMENT '用户ID',
-    `node_type` char(1) NOT NULL DEFAULT '1' COMMENT '节点类型（1文件夹，2node，3image）',
+    `node_type` char(1) NOT NULL DEFAULT '1' COMMENT '节点类型（1文件夹，2node，3file）',
     `node_name` varchar(255) DEFAULT NULL COMMENT '节点名称',
     `sort` int(11) DEFAULT '0' COMMENT '排序',
     `node_path` varchar(3000) DEFAULT NULL COMMENT '存储完整路径',

@@ -8,7 +8,7 @@ import SidebarRight from "@/layout/components/SidebarRight/index.vue";
 import {NodeType} from "@/enum/index.js";
 import LayoutTabs from "@/layout/components/LayoutTabs.vue";
 import {createUUID, domUtils} from "@/utils/index.js";
-import {getImageTab, getNoteTab} from "@/biz/tabs.js";
+import {getFileTab, getNoteTab} from "@/biz/tabs.js";
 import {useI18n} from "vue-i18n";
 import Tooltip from "@/components/base/Tooltip/Tooltip.vue";
 import Split from "@/components/container/Split/Split.vue";
@@ -175,8 +175,8 @@ function handleDrop(e) {
   for (let i = 0; i < resourceNodeList.value.length; i++) {
     if (resourceNodeList.value[i].nodeId === dragNodeId.value) {
       let tab = getNoteTab(resourceNodeList.value[i])
-      if (NodeType.isImage(resourceNodeList.value[i].nodeType)) {
-        tab = getImageTab(resourceNodeList.value[i])
+      if (NodeType.isFile(resourceNodeList.value[i].nodeType)) {
+        tab = getFileTab(resourceNodeList.value[i])
       }
       addViewAsTab(tab)
       router.push(tab.path)

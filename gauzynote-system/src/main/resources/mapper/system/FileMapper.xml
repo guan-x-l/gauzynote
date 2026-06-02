@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gauzynote.system.mapper.FileMapper">
+
+    <resultMap type="com.gauzynote.system.domain.entity.SysFile" id="FileMap">
+        <result property="fileId" column="file_id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="fileName" column="file_name" jdbcType="VARCHAR"/>
+        <result property="filePath" column="file_path" jdbcType="VARCHAR"/>
+        <result property="fileType" column="file_type" jdbcType="VARCHAR"/>
+        <result property="fileSize" column="file_size" jdbcType="INTEGER"/>
+        <result property="storageEngine" column="storage_engine" jdbcType="VARCHAR"/>
+        <result property="uploadTime" column="upload_time" jdbcType="TIMESTAMP"/>
+        <result property="delFlag" column="del_flag" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="selectById" resultMap="FileMap">
+        select
+*
+        from file
+        where file_id = #{fileId}
+          and user_id = #{userId}
+          and del_flag = '0'
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="fileId" useGeneratedKeys="true">
+        insert into file(user_id, file_name, file_path, file_type, file_size, storage_engine, upload_time)
+        values (#{userId}, #{fileName}, #{filePath}, #{fileType}, #{fileSize}, #{storageEngine}, sysdate())
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update file
+        <set>
+            <if test="fileName != null and fileName != ''">file_name = #{fileName},</if>
+            <if test="filePath != null and filePath != ''">file_path = #{filePath},</if>
+            <if test="fileType != null and fileType != ''">file_type = #{fileType},</if>
+            <if test="fileSize != null">file_size = #{fileSize},</if>
+            <if test="storageEngine != null and storageEngine != ''">storage_engine = #{storageEngine},</if>
+        </set>
+        where file_id = #{fileId}
+    </update>
+
+    <!--修改文件名-->
+    <update id="updateFileName">
+        update file SET file_name = #{fileName} where file_id = #{fileId} and user_id = #{userId}
+    </update>
+
+    <!--通过主键删除-->
+    <update id="deleteById">
+        update file
+        set del_flag = '2'
+        where file_id = #{fileId}
+          and user_id = #{userId}
+    </update>
+
+    <!--通过主键批量删除-->
+    <update id="deleteByIds">
+        update file
+        set del_flag = '2'
+        where user_id = #{userId}
+        and file_id in
+        <foreach collection="fileIds" item="fileId" open="(" separator="," close=")">
+            #{fileId}
+        </foreach>
+    </update>
+</mapper>

@@ -150,14 +150,14 @@ export const codemirrorTheme = EditorView.theme({
         fontSize: "0.9em",
         color: "var(--color-text-2)"
     },
-    ".cm-live-preview-link-text > .ͼ6,.cm-live-preview-link-text > .ͼc, .ͼ6.ͼe, .ͼ6.ͼc": {
+    ".cm-live-preview-link-text, .cm-live-preview-link-text > .ͼ6,.cm-live-preview-link-text > .ͼc, .ͼ6.ͼe, .ͼ6.ͼc": {
         color: "#0969da",
         textDecoration: "none",
     },
     ".ͼ6": {
         textDecoration: "none",
     },
-    ".cm-live-preview-link-text > .ͼ6:hover,.cm-live-preview-link-text > .ͼc:hover, .ͼ6.ͼe:hover, .ͼ6.ͼc:hover": {
+    ".cm-live-preview-link-text:hover, .cm-live-preview-link-text > .ͼ6:hover,.cm-live-preview-link-text > .ͼc:hover, .ͼ6.ͼe:hover, .ͼ6.ͼc:hover": {
         textDecoration: "underline",
     },
     ".cm-live-preview-image": {

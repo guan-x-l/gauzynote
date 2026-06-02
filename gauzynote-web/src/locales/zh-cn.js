@@ -26,6 +26,7 @@ export default {
         collapseAll: '全部收起',
         selectTheFileToOpen: '选择打开的文件',
         searchFilter: '筛选',
+        download: '下载',
     },
     layout: {
         folderList: '文件列表',
@@ -121,6 +122,11 @@ export default {
     image: {
         loading: '加载中',
     },
+    file: {
+        loading: '加载中',
+        previewNotSupported: '暂不支持预览此文件类型',
+        noPreview: '此文件类型不支持在线预览',
+    },
     imagePreview: {
         fullScreen: '全屏',
         rotateRight: '向右旋转',
@@ -201,10 +207,16 @@ export default {
         image: {
             noFile: '请选择要上传的图片文件',
             noMatch: '没有符合要求的图片文件',
+        },
+        file: {
+            noFile: '请选择要上传的文件',
+            noMatch: '没有符合要求的文件',
         }
     },
     codemirror: {
-        dropNoImage: '仅支持图片拖拽'
+        dropNoImage: '仅支持图片拖拽',
+        dropNoFile: '仅支持文件拖拽',
+        dropNonsupport: '拖拽类型不支持',
     },
     setting: {
         title: '设置',
