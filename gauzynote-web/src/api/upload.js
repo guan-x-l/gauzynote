@@ -33,4 +33,14 @@ export function uploadNetworkImage(data) {
     })
 }
 
+export function uploadFile(data) {
+    return request({
+        url: '/upload/file',
+        method: 'POST',
+        data: data,
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        },
+    })
+}
 

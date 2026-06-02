@@ -2,6 +2,8 @@ import { ViewPlugin, Decoration, WidgetType, EditorView } from "@codemirror/view
 import { syntaxTree } from "@codemirror/language"
 import { RangeSetBuilder, StateField } from "@codemirror/state"
 import DOMPurify from 'dompurify';
+import {buildFilePath, extractRelativeFilePath} from "@/biz/file.js";
+import {isValidUrl} from "@/utils/index.js";
 
 // ════════════════════════════════════════════════════════════════
 // Widget 类型定义 — 用于 Decoration.replace 替换 Markdown 语法符号

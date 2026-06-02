@@ -3,7 +3,7 @@ package com.gauzynote.common.enums;
 public enum SysResourceNodeType {
     FOLDER("1", "文件夹"),
     NOTE("2", "markdown"),
-    IMAGES("3", "图片");
+    FILE("3", "文件");
 
     private final String code;
     private final String description;

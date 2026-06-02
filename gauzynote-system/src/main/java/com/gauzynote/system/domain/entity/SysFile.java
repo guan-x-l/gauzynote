@@ -6,36 +6,36 @@ import java.util.Date;
 import java.io.Serializable;
 
 /**
- * 图片表(Images)实体类
+ * 文件表(SysFile)实体类
  *
  */
 @Data
-public class Images implements Serializable {
+public class SysFile implements Serializable {
     private static final long serialVersionUID = -30694568313614477L;
 /**
-     * 图片唯一标识ID
+     * 文件唯一标识ID
      */
-    private Long imageId;
+    private Long fileId;
 /**
      * 用户id
      */
     private Long userId;
 /**
-     * 图片文件名（存在重复）
+     * 文件名（存在重复）
      */
-    private String imageName;
+    private String fileName;
 /**
-     * 图片在服务器的存储路径
+     * 在服务器的存储路径
      */
-    private String imagePath;
+    private String filePath;
 /**
-     * 图片文件类型（如jpeg、png）
+     * 文件类型
      */
-    private String imageType;
+    private String fileType;
 /**
-     * 图片文件大小（单位：字节）
+     * 文件大小（单位：字节）
      */
-    private Long imageSize;
+    private Long fileSize;
 /**
      * 存储引擎（local：本地存储，oss：对象存储等）
      */
@@ -49,4 +49,3 @@ public class Images implements Serializable {
      */
     private String delFlag;
 }
-

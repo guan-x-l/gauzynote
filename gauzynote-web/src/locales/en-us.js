@@ -26,6 +26,7 @@ export default {
         collapseAll: 'Collapse All',
         selectTheFileToOpen: 'Select the file to open',
         searchFilter: 'Search filter',
+        download: 'Download',
     },
     layout: {
       folderList: 'Folders',
@@ -119,6 +120,11 @@ export default {
     image: {
         loading: 'Loading',
     },
+    file: {
+        loading: 'Loading',
+        previewNotSupported: 'Preview not supported for this file type',
+        noPreview: 'This file type cannot be previewed online',
+    },
     imagePreview: {
         fullScreen: 'Full Screen',
         rotateRight: 'Rotate Right',
@@ -199,10 +205,16 @@ export default {
         image: {
             noFile: 'Please select an image file to upload',
             noMatch: 'No qualified image files found',
+        },
+        file: {
+            noFile: 'Please select a file to upload',
+            noMatch: 'No qualified files found',
         }
     },
     codemirror: {
-        dropNoImage: 'Only image drag-and-drop is supported'
+        dropNoImage: 'Only image drag-and-drop is supported',
+        dropNoFile: 'Only file drag-and-drop is supported',
+        dropNonsupport: 'Drag type not supported',
     },
     setting: {
         title: 'Setting',

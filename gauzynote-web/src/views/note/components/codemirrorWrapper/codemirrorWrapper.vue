@@ -30,7 +30,7 @@ import {javaLanguage} from "@codemirror/lang-java";
 import {yamlLanguage} from "@codemirror/lang-yaml";
 import {vueLanguage} from "@codemirror/lang-vue";
 import {sql, StandardSQL} from "@codemirror/lang-sql";
-import {handleUploadImageList} from "@/biz/upload.js";
+import {handleUploadFileList} from "@/biz/upload.js";
 import {useAppStore, useTabsStore, useThemeStore} from "@/store/index.js";
 import {
   headerClassPlugin,
@@ -39,7 +39,7 @@ import {
   setHighlightedLine, versionField, syncLineHeightPlugin
 } from "./cm-plugin.js";
 import {codemirrorTheme} from "./cm-theme.js";
-import {extractRelativeImagePath, getImageById} from "@/biz/image.js";
+import {extractRelativeFilePath, getFileById} from "@/biz/file.js";
 import {NodeType} from "@/enum/index.js";
 import {Message} from "@/components/index.js";
 import {customizeKeymap, handleHeadingKeyBoardEvent,} from "@/views/note/components/codemirrorWrapper/cm-key.js";
@@ -50,6 +50,7 @@ import {livePreviewPlugin, htmlBlockField} from "./livePreviewPlugin.js";
 import {tableField} from "./tablePlugin.js";
 import {tableEditOverlay} from "./tableEditOverlay.js";
 import {codeHighlightStyle} from "./cm-codeHighlight.js";
+import {isImageByMime, isValidUrl} from "@/utils/index.js";
 
 
 const props = defineProps({
@@ -293,47 +294,50 @@ function updateCallback() {
 
 async function handleDrop(event) {
   if (dragNodeId.value) {
-    console.log(dragNodeId.value)
-    console.log(getResourceNodeByNodeId(dragNodeId.value))
     const node = getResourceNodeByNodeId(dragNodeId.value)
-
-    if (!NodeType.isImage(node.nodeType)){
-      Message.warning(t('codemirror.dropNoImage'))
-      return
-    }
-
-    const res = await getImageById(node.relatedId)
-    console.log(res)
-    if (res){
-      const relativePath = extractRelativeImagePath(res.imagePath, import.meta.env.VITE_IMAGE_BASE_DIR);
-      const imageSrc = import.meta.env.VITE_IMAGE_BASE_URL + '/image/' + relativePath
+    console.log(dragNodeId.value)
+    console.log(node)
+    if (NodeType.isNote(node.nodeType)){
       view.value.dispatch({
         changes: {
           from: view.value.posAtCoords({ x: event.clientX, y: event.clientY }),
-          insert: `![${res.imageName}](${imageSrc})`
+          insert: `[${node.nodeName}](/gauzynote/note${node.nodePath})`
         }
       })
+    } else if (NodeType.isFile(node.nodeType)){
+      const res = await getFileById(node.relatedId)
+      console.log(res)
+      if (res){
+        const relativePath = extractRelativeFilePath(res.filePath, import.meta.env.VITE_FILE_BASE_DIR);
+        const imageSrc = import.meta.env.VITE_FILE_BASE_URL + '/file/' + relativePath
+        view.value.dispatch({
+          changes: {
+            from: view.value.posAtCoords({ x: event.clientX, y: event.clientY }),
+            insert: `${isImageByMime(res.fileType) ? '!' : ''}[${res.fileName}](${imageSrc})`
+          }
+        })
+      }
+    } else {
+      Message.warning(t('codemirror.dropNonsupport'))
     }
     return
   }
   const files = event.dataTransfer.files;
   if (files.length){
-    const uploadResults = await handleUploadImageList(files, activeTab.value.nodeId)
+    const uploadResults = await handleUploadFileList(files, activeTab.value.nodeId)
     console.log(uploadResults)
     uploadResults.forEach(item=>{
       if (item.success){
         view.value.dispatch({
           changes: {
             from: view.value.posAtCoords({ x: event.clientX, y: event.clientY }),
-            insert: `![${item.name}](${item.result.data.filePath})`
+            insert: `${isImageByMime(item.result.data.fileType) ? '!' : ''}[${item.name}](${item.result.data.filePath})`
           }
         })
       }
     })
-    // clearDragenterNodeId()
-    // await updateResourceNodeData();
-    // load.close()
-  } else if (event.dataTransfer.items) {// 场景2：拖拽的是图片元素（从其他网页拖拽的img标签）
+  } else if (event.dataTransfer.items) {
+    // 场景2：拖拽的是图片元素（从其他网页拖拽的img标签）
     for (let i = 0; i < event.dataTransfer.items.length; i++) {
       const item = event.dataTransfer.items[i];
       // 检查是否是图片类型的数据
@@ -346,7 +350,7 @@ async function handleDrop(event) {
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = html;
         const img = tempDiv.querySelector('img');
-        if (img && img.src) {
+        if (img && img.src && isValidUrl(img.src)) {
           const formData = new FormData();
           formData.append('fileUrl', img.src);
           formData.append('parentNodeId', activeTab.value.nodeId);
@@ -365,7 +369,7 @@ async function handleDrop(event) {
   }
 }
 
- function handleTocLineNumber(v) {
+function handleTocLineNumber(v) {
   if (tocLineNumber.value < 0) return
   const line = view.value.state.doc.line(tocLineNumber.value)
   let a = view.value.domAtPos(line.from)

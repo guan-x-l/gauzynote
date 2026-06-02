@@ -6,7 +6,7 @@ import com.gauzynote.common.utils.AppConfigProperties;
 import com.gauzynote.common.utils.MessageUtils;
 import com.gauzynote.common.utils.SecurityUtils;
 import com.gauzynote.framework.service.FileUploadTotalSizeService;
-import com.gauzynote.system.domain.entity.Images;
+import com.gauzynote.system.domain.entity.SysFile;
 import com.gauzynote.system.domain.entity.SysResourceNode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -29,7 +29,7 @@ public class ImageUploadService {
     @Resource
     private AppConfigProperties appConfigProperties;
     @Resource
-    private ImagesService imagesService;
+    private FileService fileService;
     @Resource
     private SysResourceNodeService sysResourceNodeService;
     @Resource
@@ -67,8 +67,8 @@ public class ImageUploadService {
         Long userId = SecurityUtils.getUserId();
         Long finalParentId = this.handleParentNode(parentNodeId);
 
-        // 7. 构建上传目录和文件路径
-        Path uploadDirPath = Paths.get(appConfigProperties.getUpload().getUploadImageDir()).resolve(userId.toString());
+        // 7. 构建上传目录和文件路径（统一存储到 file/ 目录）
+        Path uploadDirPath = Paths.get(appConfigProperties.getUpload().getUploadOtherFileDir()).resolve(userId.toString());
         // 创建目录
         createDirIfNotExist(uploadDirPath);
         // 构建文件路径
@@ -79,9 +79,9 @@ public class ImageUploadService {
             throw new ServiceException(HttpStatus.BAD_REQUEST.value(), MessageUtils.message("illegal.path"));
         }
 
-        // 9. 数据库操作（插入Images和SysResourceNode，Service层已加事务）
-        Images images = imagesService.insertByFile(file, filePath, fileName);
-        SysResourceNode node = this.createResourceNode(images, fileName, finalParentId, parentNodeId);
+        // 9. 数据库操作（插入SysFile和SysResourceNode，Service层已加事务）
+        SysFile sysFile = fileService.insertByFile(file, filePath, fileName);
+        SysResourceNode node = this.createResourceNode(sysFile, fileName, finalParentId, parentNodeId);
 
         // 10. 保存文件（此时路径已合法，无无效操作）
         try {
@@ -97,8 +97,9 @@ public class ImageUploadService {
         // 12. 构建返回结果
         Map<String, Object> result = new HashMap<>(3);
         result.put("fileName", fileName);
-        result.put("filePath", contextPath + "/image/" + userId + "/" + fileHash);
+        result.put("filePath", contextPath + "/file/" + userId + "/" + fileHash);
         result.put("fileSize", file.getSize());
+        result.put("fileType", file.getContentType());
         return result;
     }
 
@@ -128,11 +129,11 @@ public class ImageUploadService {
 
 
     // 创建SysResourceNode实体并插入数据库
-    private SysResourceNode createResourceNode(Images images, String fileName, Long finalParentId, Long parentNodeId) {
+    private SysResourceNode createResourceNode(SysFile sysFile, String fileName, Long finalParentId, Long parentNodeId) {
         SysResourceNode node = new SysResourceNode();
-        node.setRelatedId(images.getImageId());
+        node.setRelatedId(sysFile.getFileId());
         node.setNodeName(fileName);
-        node.setNodeType(SysResourceNodeType.IMAGES.getCode());
+        node.setNodeType(SysResourceNodeType.FILE.getCode());
         if (finalParentId != null) {
             node.setParentId(finalParentId);
             SysResourceNode parentNode = sysResourceNodeService.selectById(parentNodeId);

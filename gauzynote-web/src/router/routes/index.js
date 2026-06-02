@@ -52,10 +52,10 @@ export const basicRoutes = [
                 }
             },
             {
-                path: "/image/:id",
-                name: "image",
+                path: "/file/:id",
+                name: "file",
                 meta: {
-                    dynamicComponent: import("@/views/image/image.vue")
+                    dynamicComponent: import("@/views/file/file.vue")
                 },
                 component: {
                     render(e) {

@@ -35,6 +35,24 @@ public class FileController {
     @Resource
     private AppConfigProperties appConfigProperties;
 
+    /**
+     * 通用文件服务端点
+     */
+    @GetMapping("/file/**")
+    public void getFile(HttpServletRequest request, HttpServletResponse resp) throws IOException {
+        // 路径处理
+        String path = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+        path = URLDecoder.decode(path, "UTF-8");
+        String fullFilePath = appConfigProperties.getUpload().getUploadOtherFileDir() + path.replaceFirst("/file/", "");
+
+        checkFilePath(fullFilePath, false);
+
+        serveFile(fullFilePath, request, resp);
+    }
+
+    /**
+     * 图片文件服务端点（向后兼容，保留旧 /image/** 路径）
+     */
     @GetMapping("/image/**")
     public void getImage(HttpServletRequest request, HttpServletResponse resp) throws IOException {
         // 路径处理
@@ -42,77 +60,88 @@ public class FileController {
         path = URLDecoder.decode(path, "UTF-8");
         String fullImagePath = appConfigProperties.getUpload().getUploadImageDir() + path.replaceFirst("/image/", "");
 
-        checkImageFile(fullImagePath);
+        checkFilePath(fullImagePath, true);
 
-        File folder = new File(fullImagePath);
+        serveFile(fullImagePath, request, resp);
+    }
+
+    private void serveFile(String fullPath, HttpServletRequest request, HttpServletResponse resp) throws IOException {
+        java.io.File folder = new java.io.File(fullPath);
         if (!folder.exists()) {
-            log.error("文件不存在:{}", fullImagePath);
+            log.error("文件不存在:{}", fullPath);
             resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
 
-        Path imagePath = Paths.get(fullImagePath);
+        Path filePath = Paths.get(fullPath);
 
         // 自动关闭输入流
-        try (InputStream in = Files.newInputStream(imagePath)) {
+        try (InputStream in = Files.newInputStream(filePath)) {
             // 设置正确的Content-Type（根据文件扩展名）
-            String contentType = Files.probeContentType(imagePath);
+            String contentType = Files.probeContentType(filePath);
             resp.setContentType(contentType != null ? contentType : MediaType.APPLICATION_OCTET_STREAM_VALUE);
 
-
             // 缓存控制设置
-            // 1. 设置过期时间
-            resp.setHeader("Cache-Control", "public, max-age=" + appConfigProperties.getUpload().getImage().getMaxAge());
+            int maxAge = appConfigProperties.getUpload().getImage().getMaxAge();
+            resp.setHeader("Cache-Control", "public, max-age=" + maxAge);
 
-            // 2. 设置过期日期（与max-age配合使用，兼容旧浏览器）
+            // 设置过期日期
             Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.SECOND, appConfigProperties.getUpload().getImage().getMaxAge());
+            calendar.add(Calendar.SECOND, maxAge);
             resp.setDateHeader("Expires", calendar.getTimeInMillis());
 
-            // 3. 添加ETag支持（基于文件最后修改时间和大小）
-            FileTime lastModifiedTime = Files.getLastModifiedTime(imagePath);
-            long fileSize = Files.size(imagePath);
+            // 添加ETag支持
+            FileTime lastModifiedTime = Files.getLastModifiedTime(filePath);
+            long fileSize = Files.size(filePath);
             String etag = "\"" + lastModifiedTime.toMillis() + "-" + fileSize + "\"";
             resp.setHeader("ETag", etag);
 
-            // 4. 设置最后修改时间
+            // 设置最后修改时间
             resp.setDateHeader("Last-Modified", lastModifiedTime.toMillis());
 
-            // 检查If-None-Match头，如果匹配则返回304 Not Modified
+            // 检查If-None-Match头
             String ifNoneMatch = request.getHeader("If-None-Match");
             if (etag.equals(ifNoneMatch)) {
                 resp.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
                 return;
             }
 
-            // 检查If-Modified-Since头，如果未修改则返回304 Not Modified
+            // 检查If-Modified-Since头
             long ifModifiedSince = request.getDateHeader("If-Modified-Since");
             if (ifModifiedSince != -1 && lastModifiedTime.toMillis() <= ifModifiedSince) {
                 resp.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
                 return;
             }
 
-
             IOUtils.copy(in, resp.getOutputStream());
         }
     }
 
-    private void checkImageFile(String imagePath) {
-        if (ObjectUtils.isEmpty(imagePath) || imagePath.isEmpty()) {
+    private void checkFilePath(String filePath, boolean imageOnly) {
+        if (ObjectUtils.isEmpty(filePath) || filePath.isEmpty()) {
             throw new ServiceException(HttpStatus.BAD_REQUEST);
         }
-        // 是否为配置的前缀，后续改到配置文件中
-        if (!imagePath.startsWith(appConfigProperties.getUpload().getUploadImageDir())) {
-            log.error("非法路径:{}", imagePath);
+
+        String baseDir = imageOnly
+                ? appConfigProperties.getUpload().getUploadImageDir()
+                : appConfigProperties.getUpload().getUploadOtherFileDir();
+
+        if (!filePath.startsWith(baseDir)) {
+            log.error("非法路径:{}", filePath);
             throw new ServiceException(HttpStatus.BAD_REQUEST);
         }
-        String fileExt = "image/" + getFileExtension(imagePath);
-        if (!isAllowedContentType(fileExt, appConfigProperties.getUpload().getImage().getAllowedContentTypes())) {
-            log.error("图片扩展名非法:{}", imagePath);
-            throw new ServiceException(HttpStatus.BAD_REQUEST);
+
+        // 仅对图片路径做扩展名校验
+        if (imageOnly) {
+            String fileExt = "image/" + getFileExtension(filePath);
+            if (!isAllowedContentType(fileExt, appConfigProperties.getUpload().getImage().getAllowedContentTypes())) {
+                log.error("图片扩展名非法:{}", filePath);
+                throw new ServiceException(HttpStatus.BAD_REQUEST);
+            }
         }
-        if (!imagePath.startsWith("/")) {
-            log.error("该路径不是绝对路径:{}", imagePath);
+
+        if (!filePath.startsWith("/")) {
+            log.error("该路径不是绝对路径:{}", filePath);
             throw new ServiceException(HttpStatus.BAD_REQUEST);
         }
     }

@@ -27,7 +27,7 @@ public class SysResourceNodeService {
     @Resource
     private NoteService noteService;
     @Resource
-    private ImagesService imageService;
+    private FileService fileService;
 
     /**
      * 通过Id查询数据
@@ -217,9 +217,9 @@ public class SysResourceNodeService {
             note.setNoteId(node.getRelatedId());
             note.setNoteName(nodeName);
             relatedUpdate = noteService.updateNoteName(note);
-        } else if (SysResourceNodeType.IMAGES.getCode().equals(node.getNodeType())) {
-            // 图片修改名称流程
-            relatedUpdate = imageService.updateImageName(node.getRelatedId(), nodeName);
+        } else if (SysResourceNodeType.FILE.getCode().equals(node.getNodeType())) {
+            // 文件修改名称流程
+            relatedUpdate = fileService.updateFileName(node.getRelatedId(), nodeName);
         }
 
         return relatedUpdate;
@@ -326,15 +326,15 @@ public class SysResourceNodeService {
         List<Long> nodeIdList = new ArrayList<>();
         // note
         List<Long> noteIdList = new ArrayList<>();
-        // image
-        List<Long> imageIdList = new ArrayList<>();
+        // file
+        List<Long> fileIdList = new ArrayList<>();
         for (SysResourceNode node : sysResourceNodes) {
             nodeIdList.add(node.getNodeId());
             if (node.getRelatedId() != null && SysResourceNodeType.NOTE.getCode().equals(node.getNodeType())) {
                 noteIdList.add(node.getRelatedId());
             }
-            if (node.getRelatedId() != null && SysResourceNodeType.IMAGES.getCode().equals(node.getNodeType())) {
-                imageIdList.add(node.getRelatedId());
+            if (node.getRelatedId() != null && SysResourceNodeType.FILE.getCode().equals(node.getNodeType())) {
+                fileIdList.add(node.getRelatedId());
             }
         }
 
@@ -346,8 +346,8 @@ public class SysResourceNodeService {
         if (!noteIdList.isEmpty()) {
             noteService.deleteByIds(noteIdList);
         }
-        if (!imageIdList.isEmpty()) {
-            imageService.deleteByIds(imageIdList);
+        if (!fileIdList.isEmpty()) {
+            fileService.deleteByIds(fileIdList);
         }
         // todo 回收站
         return i;

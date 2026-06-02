@@ -29,7 +29,9 @@ export const isEmpty = (val) => {
     }
     return false;
 }
-
+export const isImageByMime = (fileType) => {
+    return isString(fileType) && fileType.startsWith('image/');
+}
 /**
  * 判断一个值是否为Vue组件的公开实例（ComponentPublicInstance）
  * 核心依据Vue组件实例的内置标识：存在非undefined的.$属性（Vue3组件实例核心特征）
