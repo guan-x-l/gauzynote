@@ -226,7 +226,7 @@ function buildDecorations(view) {
   // 判断选区是否与 [from, to] 范围重叠；光标恰在 from 且无选区时返回 false，
   // 避免切换模式后默认 (0,0) 选区误触发 isActive
   function inRange(from, to) {
-    return selFrom <= to && selTo >= from && !(selFrom === selTo && selFrom === from)
+    return selFrom <= to && selTo >= from - 1 && !(selFrom === selTo && selFrom === from - 1)
   }
 
   // ── 预扫描：匹配 HTML 标签对 ──
@@ -657,8 +657,20 @@ function buildDecorations(view) {
           if (parent && parent.type.name === 'Link') {
             const isActive = inRange(parent.from, parent.to)
             if (!isActive) {
-              builder.add(nodeRef.from, nodeRef.to, Decoration.replace({ widget: new InvisibleWidget() }))
-              // builder.add(markStart, cursor.from, Decoration.mark({ class: 'cm-live-preview-link-text' }))
+              // 仅隐藏链接目标 URL（出现在 ] 之后），
+              // 不隐藏链接文本中的 URL（如 [https://example.com](https://example.com) 的文本部分）
+              let closingBracketBefore = false
+              const cursor2 = parent.cursor()
+              let lc = 0
+              if (cursor2.firstChild()) {
+                do {
+                  if (cursor2.name === 'LinkMark') lc++
+                  if (lc >= 2 && cursor2.to <= nodeRef.from) { closingBracketBefore = true; break }
+                } while (cursor2.nextSibling() && cursor2.from < nodeRef.from)
+              }
+              if (closingBracketBefore) {
+                builder.add(nodeRef.from, nodeRef.to, Decoration.replace({ widget: new InvisibleWidget() }))
+              }
             }
           }
           if (['Link', 'LinkReference', 'Paragraph'].includes(parent.type.name)){
