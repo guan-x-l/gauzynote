@@ -73,6 +73,15 @@ export const basicRoutes = [
                 component: () => import("@/views/task/task.vue"),
             },
             {
+                path: "/recycleBin",
+                name: "recycleBin",
+                meta: {
+                    title: '回收站',
+                    isOnly: true,
+                },
+                component: () => import("@/views/recycleBin/recycleBin.vue"),
+            },
+            {
                 path: "/dict/type",
                 name: "dictType",
                 meta: {

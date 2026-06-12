@@ -97,4 +97,14 @@ public class NoteService {
             throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, MessageUtils.message("note.deletion.failed"));
         }
     }
+
+    /**
+     * 批量恢复（将del_flag从'2'改回'0'）
+     *
+     * @param noteIds 主键
+     */
+    public void restoreByIds(List<Long> noteIds) {
+        Long userId = SecurityUtils.getUserId();
+        this.noteDao.restoreByIds(noteIds, userId);
+    }
 }

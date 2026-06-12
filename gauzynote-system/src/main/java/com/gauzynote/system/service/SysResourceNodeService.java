@@ -5,7 +5,9 @@ import com.gauzynote.common.exception.ServiceException;
 import com.gauzynote.common.utils.MessageUtils;
 import com.gauzynote.common.utils.SecurityUtils;
 import com.gauzynote.system.domain.entity.Note;
+import com.gauzynote.system.domain.entity.RecycleBin;
 import com.gauzynote.system.domain.entity.SysResourceNode;
+import com.gauzynote.system.mapper.RecycleBinMapper;
 import com.gauzynote.system.mapper.SysResourceNodeMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +30,9 @@ public class SysResourceNodeService {
     private NoteService noteService;
     @Resource
     private FileService fileService;
+
+    @Resource
+    private RecycleBinMapper recycleBinDao;
 
     /**
      * 通过Id查询数据
@@ -349,7 +354,24 @@ public class SysResourceNodeService {
         if (!fileIdList.isEmpty()) {
             fileService.deleteByIds(fileIdList);
         }
-        // todo 回收站
+
+        // 写入回收站记录
+        SysResourceNode rootNode = null;
+        for (SysResourceNode node : sysResourceNodes) {
+            if (node.getNodeId().equals(nodeId)) {
+                rootNode = node;
+                break;
+            }
+        }
+        if (rootNode != null) {
+            RecycleBin recycleBin = new RecycleBin();
+            recycleBin.setNodeId(rootNode.getNodeId());
+            recycleBin.setUserId(userId);
+            recycleBin.setResourceType(rootNode.getNodeType());
+            recycleBin.setResourceName(rootNode.getNodeName());
+            this.recycleBinDao.insert(recycleBin);
+        }
+
         return i;
     }
 

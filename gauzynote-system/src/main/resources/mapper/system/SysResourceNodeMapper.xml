@@ -70,9 +70,8 @@
     <!--查询-->
     <select id="selectAllChildrenByNodeId" resultMap="SysResourceNodeMap">
         SELECT * FROM sys_resource_node
-        WHERE node_path LIKE  CONCAT('%/', #{nodeId}, '/%')
-            and del_flag = '0'
-        or node_id = #{nodeId}
+        WHERE (node_path LIKE CONCAT('%/', #{nodeId}, '/%') OR node_id = #{nodeId})
+          AND del_flag = '0'
     </select>
     <!--查询asset-->
     <select id="selectAssetsByNodeNameAndDepth" resultMap="SysResourceNodeMap">
@@ -144,6 +143,24 @@
     <update id="deleteByIds">
         update sys_resource_node
         set del_flag = '2'
+        where user_id = #{userId}
+          and node_id in
+        <foreach collection="nodeIds" item="nodeId" open="(" separator="," close=")">
+            #{nodeId}
+        </foreach>
+    </update>
+
+    <!--查询所有已删除的子孙节点（含自身），用于恢复时查找-->
+    <select id="selectAllChildrenByNodeIdIncludeDeleted" resultMap="SysResourceNodeMap">
+        SELECT * FROM sys_resource_node
+        WHERE (node_path LIKE CONCAT('%/', #{nodeId}, '/%') OR node_id = #{nodeId})
+          AND del_flag = '2'
+    </select>
+
+    <!--批量恢复-->
+    <update id="restoreByIds">
+        update sys_resource_node
+        set del_flag = '0'
         where user_id = #{userId}
           and node_id in
         <foreach collection="nodeIds" item="nodeId" open="(" separator="," close=")">

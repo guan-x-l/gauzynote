@@ -55,10 +55,16 @@ function handleTabClick(tab) {
               @click.middle="deleteTab(item)"
               :title="item.title"
           >
-            <div class="tabs-pages__item-title flex-1 text-ellipsis" v-if="NodeType.isFile(item.nodeType)">
-              <icon-image style="margin-right: 4px" />{{ getFileNameWithoutExtension(item.title) }}
+            <div class="tabs-pages__item-title flex-1 text-ellipsis">
+              <span style="margin-right: 4px" >
+                <icon-file-text v-if="item.nodeType && NodeType.isNote(item.nodeType)"/>
+                <icon-check-circle v-else-if="item.name === 'task'"/>
+                <icon-trash v-else-if="item.name === 'recycleBin'"/>
+                <icon-file v-else/>
+              </span>
+              <span v-if="NodeType.isFile(item.nodeType)">{{ getFileNameWithoutExtension(item.title) }}</span>
+              <span v-else>{{ item.title }}</span>
             </div>
-            <div class="tabs-pages__item-title flex-1 text-ellipsis" v-else>{{ item.title }}</div>
             <Tooltip v-if="item.isPin" :content="t('action.unpin')" position="bottom" :mouseEnterDelay="300" mini>
               <m-button class="tabs-pages__item-pin" type="base" size="mini" shape="circle" @click="changeTabFixed(item)" :aria-label="t('action.unpin')">
                 <template #icon>
@@ -156,7 +162,7 @@ function handleTabClick(tab) {
   .tabs-pages__item-title {
     height: 32px;
     line-height: 32px;
-    padding: 0 8px 0 16px;
+    padding: 0 8px;
     border-radius: 4px;
     user-select: none;
   }

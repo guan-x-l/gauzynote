@@ -9,6 +9,12 @@ const resourceNodeList = ref([])
 const resourceNodeListVersion = ref(1)
 
 /**
+ * 回收站变更版本号，删除/恢复/彻底删除时递增，回收站页面监听此值刷新
+ * @type {import('vue').Ref<number>}
+ */
+const recycleBinChangeVersion = ref(0)
+
+/**
  * 需要聚焦
  * @type {import('vue').Ref<number[]>}
  */
@@ -116,11 +122,17 @@ export const useAppStore = () => {
 
     })
 
+    function notifyRecycleBinChange() {
+        recycleBinChangeVersion.value++
+    }
+
     return {
         initAppData,
         resourceNodeListVersion,
         resourceNodeList,
+        recycleBinChangeVersion,
         initResourceNode,
+        notifyRecycleBinChange,
         pushResourceNodeList,
         getResourceNodeByNodeId,
         getResourceNodeByRelatedId,

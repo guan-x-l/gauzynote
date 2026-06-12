@@ -66,4 +66,26 @@
             #{fileId}
         </foreach>
     </update>
+
+    <!--批量恢复-->
+    <update id="restoreByIds">
+        update file
+        set del_flag = '0'
+        where user_id = #{userId}
+          and file_id in
+        <foreach collection="fileIds" item="fileId" open="(" separator="," close=")">
+            #{fileId}
+        </foreach>
+    </update>
+
+    <!--通过ID列表查询（不过滤del_flag，用于彻底删除时查找路径）-->
+    <select id="selectByIdsIgnoreDelFlag" resultMap="FileMap">
+        select *
+        from file
+        where user_id = #{userId}
+          and file_id in
+        <foreach collection="fileIds" item="fileId" open="(" separator="," close=")">
+            #{fileId}
+        </foreach>
+    </select>
 </mapper>

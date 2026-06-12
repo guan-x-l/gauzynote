@@ -92,21 +92,13 @@ public class FileService {
     }
 
     /**
-     * 通过主键删除数据
+     * 通过主键删除数据（移入回收站，不删物理文件）
      *
      * @param fileId 主键
      * @return 是否成功
      */
     public int deleteById(Long fileId) {
         Long userId = SecurityUtils.getUserId();
-        SysFile sysFile = this.fileDao.selectById(fileId, userId);
-        if (sysFile == null) {
-            throw new ServiceException(HttpServletResponse.SC_NOT_FOUND, MessageUtils.message("resource.not.exists"));
-        }
-        boolean b = deleteFile(sysFile.getFilePath());
-        if (!b) {
-            throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, MessageUtils.message("file.deletion.failed"));
-        }
         int i = this.fileDao.deleteById(fileId, userId);
         if (i <= 0) {
             throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, MessageUtils.message("file.deletion.failed"));
@@ -115,7 +107,7 @@ public class FileService {
     }
 
     /**
-     * 通过主键删除数据
+     * 通过主键删除数据（移入回收站，不删物理文件）
      *
      * @param fileIds 主键
      */
@@ -125,5 +117,30 @@ public class FileService {
         if (i <= 0) {
             throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, MessageUtils.message("file.deletion.failed"));
         }
+    }
+
+    /**
+     * 彻底删除：物理删除磁盘文件
+     *
+     * @param fileIds 文件ID列表
+     */
+    public void permanentDeleteFiles(List<Long> fileIds) {
+        Long userId = SecurityUtils.getUserId();
+        List<SysFile> files = this.fileDao.selectByIdsIgnoreDelFlag(fileIds, userId);
+        for (SysFile sysFile : files) {
+            if (sysFile.getFilePath() != null) {
+                deleteFile(sysFile.getFilePath());
+            }
+        }
+    }
+
+    /**
+     * 批量恢复（将del_flag从'2'改回'0'）
+     *
+     * @param fileIds 文件ID列表
+     */
+    public void restoreByIds(List<Long> fileIds) {
+        Long userId = SecurityUtils.getUserId();
+        this.fileDao.restoreByIds(fileIds, userId);
     }
 }

@@ -138,5 +138,20 @@ public interface SysResourceNodeMapper {
      */
     int deleteByIds(@Param("nodeIds") List<Long> nodeIds,@Param("userId") Long userId);
 
+    /**
+     * 根据nodeId查询所有已删除的子节点（含自身），不过滤del_flag
+     * @param nodeId 主键
+     */
+    List<SysResourceNode> selectAllChildrenByNodeIdIncludeDeleted(@Param("nodeId") Long nodeId);
+
+    /**
+     * 批量恢复（将del_flag从'2'改回'0'）
+     *
+     * @param nodeIds 主键集合
+     * @param userId 用户ID
+     * @return 影响行数
+     */
+    int restoreByIds(@Param("nodeIds") List<Long> nodeIds, @Param("userId") Long userId);
+
 }
 
