@@ -29,7 +29,7 @@ defineProps({
   currentMenu: String,
 })
 const {t} = useI18n()
-const {resourceNodeList, resourceNodeListVersion, initResourceNode, updateResourceNodeNameByNodeId, getResourceNodeByNodeId, getResourceNodeByRelatedId, pushResourceNodeList, needFocusAssetNameIdList, dragNodeId} = useAppStore()
+const {resourceNodeList, resourceNodeListVersion, initResourceNode, notifyRecycleBinChange, updateResourceNodeNameByNodeId, getResourceNodeByNodeId, getResourceNodeByRelatedId, pushResourceNodeList, needFocusAssetNameIdList, dragNodeId} = useAppStore()
 const {activeTab,activeTabId, tabsList, addViewAsTab, replaceCurrentTab, updateTabTitleByNodeId, removeTab} = useTabsStore()
 const router = useRouter()
 const route = useRoute()
@@ -216,9 +216,10 @@ async function handleTreeNodeDropdownSelect(key, nodeItem) {
   } else if(key === 'delete' && nodeId){
     for (let i = 0; i < resourceNodeList.value.length; i++) {
       if (resourceNodeList.value[i].nodeId === nodeId) {
-        const r= confirm(t('resourceNode.confirmDel') + resourceNodeList.value[i].nodeName);
+        const r= confirm(t('resourceNode.moveToTheRecycleBin')+ ' ' + resourceNodeList.value[i].nodeName);
         if (r === true) {
           await deleteResourceNode(resourceNodeList.value[i].nodeId)
+          notifyRecycleBinChange()
           // todo,新增或删除是否需要刷新列表，或者直接入数组中，节约资源
           updateResourceNodeData().then(res=>{
             tabsList.value.forEach(tab=>{

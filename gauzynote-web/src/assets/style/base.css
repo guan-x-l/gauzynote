@@ -572,6 +572,13 @@ img.img-error {
     overflow: hidden;
     -webkit-line-clamp: 3;
 }
+.text-ellipsis-2-row {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+}
 
 .text-ellipsis {
         white-space: nowrap;

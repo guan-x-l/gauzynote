@@ -61,4 +61,22 @@ public interface FileMapper {
      */
     int deleteByIds(@Param("fileIds") List<Long> fileIds, @Param("userId") Long userId);
 
+    /**
+     * 批量恢复（将del_flag从'2'改回'0'）
+     *
+     * @param fileIds 主键集合
+     * @param userId 用户ID
+     * @return 影响行数
+     */
+    int restoreByIds(@Param("fileIds") List<Long> fileIds, @Param("userId") Long userId);
+
+    /**
+     * 通过ID列表查询数据（不过滤del_flag，用于彻底删除时查找文件路径）
+     *
+     * @param fileIds 主键集合
+     * @param userId 用户ID
+     * @return 实例对象列表
+     */
+    List<SysFile> selectByIdsIgnoreDelFlag(@Param("fileIds") List<Long> fileIds, @Param("userId") Long userId);
+
 }

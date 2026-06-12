@@ -48,6 +48,13 @@ const navs2 = [
     path: '/task',
     noSelect: true
   },
+  {
+    key: 'recycleBin',
+    title: 'layout.recycleBin',
+    iconComponent: 'IconTrash',
+    path: '/recycleBin',
+    noSelect: true
+  },
   /*{
     key: 'dict',
     title: 'layout.dict',

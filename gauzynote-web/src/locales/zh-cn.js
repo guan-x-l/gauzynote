@@ -31,6 +31,7 @@ export default {
     layout: {
         folderList: '文件列表',
         task: '任务列表',
+        recycleBin: '回收站',
         wysiwyg: 'Markdown 编辑器',
         dict: '字典',
         header: {},
@@ -71,6 +72,7 @@ export default {
             userManagement: '用户管理',
             account: '帐号管理',
             task: '任务列表',
+            recycleBin: '回收站',
             wysiwyg: 'Markdown 编辑器',
         }
     },
@@ -195,7 +197,7 @@ export default {
     resourceNode: {
         root: '根目录',
         moveTo: '移动至',
-        confirmDel: '是否删除',
+        moveToTheRecycleBin: '移到回收站',
         newTab: '在新的标签页中打开'
     },
     sidebar: {
@@ -279,5 +281,20 @@ export default {
         505: "HTTP 版本不受支持",
         0: "服务暂时无法访问，请稍后再试",
         unknown: "未知错误"
+    },
+    recycleBin: {
+        title: '回收站',
+        restore: '恢复',
+        permanentDelete: '彻底删除',
+        confirmRestore: '确认恢复该资源，并放回原处？',
+        confirmPermanentDelete: '确认彻底删除？此操作不可撤销。',
+        listView: '列表视图',
+        gridView: '图标视图',
+        resourceName: '资源名称',
+        resourceType: '类型',
+        deleteTime: '删除时间',
+        folder: '文件夹',
+        note: '笔记',
+        file: '文件',
     },
 };

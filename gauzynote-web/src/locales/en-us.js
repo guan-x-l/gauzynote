@@ -31,6 +31,7 @@ export default {
     layout: {
       folderList: 'Folders',
       task: 'Task List',
+      recycleBin: 'Recycle Bin',
       wysiwyg: 'Markdown Editor',
       dict: 'Dictionary',
         header: {},
@@ -69,6 +70,7 @@ export default {
             userManagement: 'User Management',
             account: 'account Management',
             task: 'Task List',
+            recycleBin: 'Recycle Bin',
             wysiwyg: 'Markdown Editor',
         }
     },
@@ -193,7 +195,7 @@ export default {
     resourceNode: {
         root: 'Root Directory',
         moveTo: 'Move To',
-        confirmDel: 'Confirm deletion?',
+        moveToTheRecycleBin: 'Move to the Recycle Bin',
         newTab: 'Open in New Tab'
     },
     sidebar: {
@@ -277,5 +279,20 @@ export default {
         505: "HTTP version not supported",
         0: "Service temporarily unavailable, please try again later",
         unknown: "Unknown error"
+    },
+    recycleBin: {
+        title: 'Recycle Bin',
+        restore: 'Restore',
+        permanentDelete: 'Permanently Delete',
+        confirmRestore: 'Confirm to restore this resource and return it to its original position?',
+        confirmPermanentDelete: 'Confirm permanent deletion? This action cannot be undone.',
+        listView: 'List View',
+        gridView: 'Grid View',
+        resourceName: 'Resource Name',
+        resourceType: 'Type',
+        deleteTime: 'Delete Time',
+        folder: 'Folder',
+        note: 'Note',
+        file: 'File',
     }
 };

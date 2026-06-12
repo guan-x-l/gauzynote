@@ -70,5 +70,16 @@
             #{noteId}
         </foreach>
     </update>
+
+    <!--    批量恢复-->
+    <update id="restoreByIds">
+        update note
+        set del_flag = '0'
+        where user_id = #{userId}
+          and note_id in
+        <foreach collection="noteIds" item="noteId" open="(" separator="," close=")">
+            #{noteId}
+        </foreach>
+    </update>
 </mapper>
 

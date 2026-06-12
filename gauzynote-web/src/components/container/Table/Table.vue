@@ -656,7 +656,7 @@ onUnmounted(() => {
             </tbody>
             <tbody v-else-if="!loading">
             <tr class="table-row" style="text-align: center">
-              <td :colspan="renderColumns.length + (showDragHandleColumn ? 1 : 0)">无数据</td>
+              <td :colspan="renderColumns.length + (showDragHandleColumn ? 1 : 0)">{{$t('empty.description')}}</td>
             </tr>
             </tbody>
           </table>

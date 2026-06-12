@@ -306,10 +306,13 @@ onMounted(() => {
                     <template #content>
                       <dropdown-option v-for="item in tabsList" @click="handleTabClick(item)">
                         <template #icon>
-                          <icon-file-text v-if="item.nodeId"/>
+                          <icon-file-text v-if="item.nodeType && NodeType.isNote(item.nodeType)"/>
+                          <icon-check-circle v-else-if="item.name === 'task'"/>
+                          <icon-trash v-else-if="item.name === 'recycleBin'"/>
                           <icon-file v-else/>
                         </template>
-                        <div style="max-width: 200px" class="text-ellipsis">{{ item.title }}</div>
+                        <div>{{ item.title }}</div>
+<!--                        <div style="max-width: 200px" class="text-ellipsis">{{ item.title }}</div>-->
                       </dropdown-option>
                       <divider/>
                       <dropdown-option @click="handleCloseAllTabs">

@@ -60,5 +60,14 @@ public interface NoteMapper {
      */
     int deleteByIds(@Param("noteIds") List<Long> noteIds,@Param("userId") Long userId);
 
+    /**
+     * 批量恢复（将del_flag从'2'改回'0'）
+     *
+     * @param noteIds 主键集合
+     * @param userId 用户ID
+     * @return 影响行数
+     */
+    int restoreByIds(@Param("noteIds") List<Long> noteIds, @Param("userId") Long userId);
+
 }
 
