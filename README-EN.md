@@ -14,7 +14,7 @@ An open-source, self-hosted Web-based Markdown note-taking tool designed for dev
 | Privacy   | Self-hosted, local or private cloud, data isolated per account |
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0-green.svg)]()
+[![Version](https://img.shields.io/badge/version-1.1-green.svg)]()
 [![Java](https://img.shields.io/badge/Java-8-orange.svg)]()
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7.6-brightgreen.svg)]()
 [![Vue](https://img.shields.io/badge/Vue-3.5-4fc08d.svg)]()
@@ -169,7 +169,7 @@ app:
 
 ### Resource Management
 * [x] Resource manager (create, edit, delete, move, rename files/folders)
-* [ ] Recycle bin (planned)
+* [x] Recycle bin (Move to Recycle Bin, Restore to Original Location, Permanently Delete)
 
 ### System Features
 * [x] Account system (register, login, change password)

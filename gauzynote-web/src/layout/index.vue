@@ -34,10 +34,10 @@ const {
 } = useTabsStore()
 
 initAppData()
-initTabsData()
-
 const initStatus = ref(false)
+
 const route = useRoute()
+initTabsData(route)
 const router = useRouter()
 const {t} = useI18n()
 

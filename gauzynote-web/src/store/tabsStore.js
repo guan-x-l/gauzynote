@@ -48,7 +48,7 @@ const activeTab = computed(()=>tabsList.value.find(item=>item.tabId === activeTa
 const activeTabRelatedId = computed(()=>activeTab.value?.relatedId || null)
 
 
-function initTabsData() {
+function initTabsData(route) {
     let id =  localStorageUtil.get(commonKeys.ACTIVE_TAB_ID, null)
     const arr = localStorageUtil.get(commonKeys.TAB_LIST, [])
     arr.forEach((item, i) => {
@@ -61,6 +61,12 @@ function initTabsData() {
     })
     tabId.value = Math.max(...arr.map(item=>item.tabId), 1)
     tabIndex.value = Math.max(...arr.map(item=>item.tabIndex), 1)
+    if (arr.filter(item=>item.path === route.path).length <= 0) {
+        const tab = _getTabByView(route)
+        arr.push(tab)
+        tabId.value = tab.tabId
+        id = tab.tabId
+    }
     // cachedViews.value = arr.map(item=>item.componentName)
     tabsList.value = arr
     activeTabId.value = id || tabId.value

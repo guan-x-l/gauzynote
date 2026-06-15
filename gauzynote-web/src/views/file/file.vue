@@ -20,6 +20,7 @@ const id = route.params.id
 const file = ref({})
 const fileName = ref('')
 const isPreviewable = ref(false)
+const loading = ref(true)
 
 const PREVIEWABLE_TYPES = ['image/', 'text/plain', 'application/pdf', 'video/', 'audio/']
 
@@ -40,6 +41,7 @@ getFileById(id).then(res=>{
   if (activeTab.value.title !== res.fileName) {
     updateTabTitleByRelatedId(id, NodeType.FILE.getCode(), res.fileName)
   }
+  loading.value = false
   nextTick(()=>{
     assetLoadingStatus.value = true
   })
@@ -81,7 +83,7 @@ function handleDownload() {
       </div>
     </template>
     <!-- 不可预览文件：显示基本信息 + 下载 -->
-    <div v-else class="file-info-only">
+    <div v-else-if="!loading" class="file-info-only">
       <div class="file-icon-large">
         <icon-file size="64"></icon-file>
       </div>
@@ -89,7 +91,7 @@ function handleDownload() {
     </div>
     <!-- 基本信息（通用） -->
     <div class="file-meta">
-      <div>文件名: {{file.fileName}}</div>
+      <div class="text-break">文件名: {{file.fileName}}</div>
       <div>上传于: {{file.uploadTime}}</div>
       <div>文件大小: {{ formatFileSize(file.fileSize) }}</div>
       <div>文件类型: {{file.fileType}}</div>
