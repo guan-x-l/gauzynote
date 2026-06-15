@@ -5,7 +5,7 @@
 
     <groupId>com.gauzynote</groupId>
     <artifactId>gauzynote</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
 
     <name>gauzynote</name>
     <description>gauzynote</description>
@@ -31,7 +31,7 @@
         <jwt.version>0.9.1</jwt.version>
         <spring-security.version>5.7.11</spring-security.version>
         <logback.version>1.4.12</logback.version>
-        <gauzynote.version>1.0</gauzynote.version>
+        <gauzynote.version>1.1</gauzynote.version>
         <relativePath/>
     </properties>
 
@@ -60,22 +60,22 @@
             <dependency>
                 <groupId>gauzynote-common</groupId>
                 <artifactId>gauzynote-common</artifactId>
-                <version>1.0</version>
+                <version>1.1</version>
             </dependency>
             <dependency>
                 <groupId>gauzynote-framework</groupId>
                 <artifactId>gauzynote-framework</artifactId>
-                <version>1.0</version>
+                <version>1.1</version>
             </dependency>
             <dependency>
                 <groupId>gauzynote-application</groupId>
                 <artifactId>gauzynote-application</artifactId>
-                <version>1.0</version>
+                <version>1.1</version>
             </dependency>
             <dependency>
                 <groupId>gauzynote-system</groupId>
                 <artifactId>gauzynote-system</artifactId>
-                <version>1.0</version>
+                <version>1.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

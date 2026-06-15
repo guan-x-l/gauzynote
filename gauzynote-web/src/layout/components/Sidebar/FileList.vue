@@ -306,12 +306,12 @@ watch(domHidden, ()=>{
 })
 
 function handleTreeNodeItemDragover(e,node) {
-  if(dragNodeId.value){
+  if(dragNodeId.value && dragenterNodeId.value){
     const dropNodeName = NodeType.isFolder(node.nodeType) ? node.nodeName : getResourceNodeByNodeId(node?.parentId)?.nodeName || t('resourceNode.root')
     domUtils('#dragImgDom').setStyle({
       left: `${e.clientX}px`,
       top: `${e.clientY}px`,
-    }).query('.drop-node-name').get().innerText = `${t('resourceNode.moveTo')} “${dropNodeName}”`
+    }).query('.drop-node-name').get().innerText = dragNodeId.value !== dragenterNodeId.value ? `${t('resourceNode.moveTo')} “${dropNodeName}”` : ''
     e.dataTransfer.dropEffect = 'move';
   }
   if (dragenterNodeId.value === node.nodeId) return
@@ -429,12 +429,13 @@ function handleDragStart(e,node) {
   document.addEventListener('dragover', handleBodyDragover);
 }
 function handleFileListDragleave(e) {
-  document.querySelector('#dragImgDom .drop-node-name').innerText = ``
+  document.querySelector('#dragImgDom .drop-node-name').innerText = ''
   clearDragenterNodeId()
 }
 function handleDragEnd() {
   document.getElementById('dragImgDom').style.display = 'none'
   document.removeEventListener('dragover', handleBodyDragover);
+  document.querySelector('#dragImgDom .drop-node-name').innerText = ''
   dragNodeId.value = null
 }
 </script>

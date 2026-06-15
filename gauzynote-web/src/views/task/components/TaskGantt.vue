@@ -697,8 +697,9 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="gantt-view">
-    <Scrollbar class="flex" :outer-style="`height:${viewMaxHeight+'px'};overflow: hidden;`">
-    <div v-if="ganttTasks.length" class="gantt-main" :style="`height:${viewMaxHeight+'px'};`">
+<!--    <Scrollbar class="flex" :outer-style="`height:${viewMaxHeight+'px'};overflow: hidden;`">-->
+<!--    <div v-if="ganttTasks.length" class="gantt-main" :style="`height:${viewMaxHeight+'px'};height: 100%`">-->
+    <div v-if="ganttTasks.length" class="gantt-main" style="height: 100%">
       <Split
         class="gantt-split"
         direction="horizontal"
@@ -842,7 +843,7 @@ onBeforeUnmount(() => {
     <div v-else class="gantt-empty">
       <div class="gantt-empty-title">暂无任务</div>
     </div>
-    </Scrollbar>
+<!--    </Scrollbar>-->
   </div>
 </template>
 

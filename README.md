@@ -14,7 +14,7 @@
 | 数据隐私    | 自托管，本地或者私有云部署，不同账户数据独立 |
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0-green.svg)]()
+[![Version](https://img.shields.io/badge/version-1.1-green.svg)]()
 [![Java](https://img.shields.io/badge/Java-8-orange.svg)]()
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7.6-brightgreen.svg)]()
 [![Vue](https://img.shields.io/badge/Vue-3.5-4fc08d.svg)]()
@@ -176,7 +176,7 @@ app:
 
 ### 资源管理
 * [x] 资源管理器（文件夹/文件创建、编辑、删除、移动、重命名）
-* [ ] 回收站（规划中）
+* [x] 回收站（目录/笔记/文件移入回收站、放回原处、彻底删除）
 
 ### 系统功能
 * [x] 账户系统（注册、登录、密码修改）

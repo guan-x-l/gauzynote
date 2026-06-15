@@ -7,6 +7,8 @@ import {UserType} from "@/enum/index.js";
 import localStorageUtil from "@/utils/lib/localStorageUtil.js";
 import {commonKeys} from "@/constants/cacheKeys.js";
 import dayjs from "@/utils/lib/dayjs.js";
+import {getStorageSpace} from "@/api/upload.js";
+import {formatBytes} from "@/utils/index.js";
 
 const router = useRouter()
 const {userType} = useUserStore()
@@ -15,10 +17,10 @@ const {locale, t} = useI18n()
 
 const show = defineModel({type: Boolean})
 const menuData = [
-  {
+/*  {
     id: 1,
     label: 'setting.menu.accountAndSecurity',
-  },
+  },*/
   {
     id: 2,
     label: 'setting.menu.universal',
@@ -49,10 +51,14 @@ const themes = [
     label: 'setting.themes.dark'
   }
 ]
+const storageSpace = ref({})
 
-
-const currentMenu = ref(1)
+const currentMenu = ref(2)
 const theme = ref(currentTheme.value)
+
+getStorageSpace().then(res => {
+  storageSpace.value = res.data
+})
 
 /**
  * 切换左侧设置菜单高亮项。
@@ -161,6 +167,7 @@ function handleGoToUserManagementPage() {
             </m-button>
           </m-form-item>
         </m-form>
+        <p>总存储空间{{formatBytes(storageSpace.storageSpace)}}；已使用存储空间{{formatBytes(storageSpace.usedStorageSpace)}}</p>
         <divider/>
         <h4>{{t('setting.menu.regarding')}}</h4>
         <h4>快捷键</h4>

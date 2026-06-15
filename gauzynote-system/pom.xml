@@ -8,20 +8,20 @@
 
     <description>gauzynote-system</description>
 
-    <version>1.0</version>
+    <version>1.1</version>
 
     <!-- 继承本项目的父工程 -->
     <parent>
         <groupId>com.gauzynote</groupId>
         <artifactId>gauzynote</artifactId>
-        <version>1.0</version>
+        <version>1.1</version>
     </parent>
 
     <dependencies>
         <dependency>
             <groupId>com.gauzynote</groupId>
             <artifactId>gauzynote-framework</artifactId>
-            <version>1.0</version>
+            <version>1.1</version>
         </dependency>
     </dependencies>
 </project>
