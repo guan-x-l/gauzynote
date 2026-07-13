@@ -3,6 +3,7 @@ import {useRoute, useRouter} from "vue-router";
 import {nextTick, ref, watch} from "vue";
 import ToolbarFile from "@/views/file/components/ToolbarFile.vue";
 import ImageViewer from "@/views/file/components/ImageViewer.vue";
+import TextViewer from "@/views/file/components/TextViewer.vue";
 import {useAppStore, useTabsStore} from "@/store/index.js";
 import {getFileById} from "@/biz/file.js";
 import {NodeType} from "@/enum/index.js";
@@ -22,7 +23,7 @@ const fileName = ref('')
 const isPreviewable = ref(false)
 const loading = ref(true)
 
-const PREVIEWABLE_TYPES = ['image/', 'text/plain', 'application/pdf', 'video/', 'audio/']
+const PREVIEWABLE_TYPES = ['image/', 'text/plain', 'application/json', 'application/pdf', 'video/', 'audio/']
 
 function checkPreviewable(fileType) {
   if (!fileType) return false
@@ -77,6 +78,8 @@ function handleDownload() {
     <template v-if="isPreviewable">
       <!-- 图片类型用 ImageViewer 预览 -->
       <image-viewer v-if="file.fileType && file.fileType.startsWith('image/')" :file="file" />
+      <!-- 文本 / JSON 类型用 TextViewer 预览 -->
+      <text-viewer v-else-if="file.fileType && (file.fileType === 'text/plain' || file.fileType === 'application/json')" :file="file" />
       <!-- 其他可预览类型暂显示基本信息 -->
       <div v-else class="file-preview-placeholder">
         <p>{{ t('file.previewNotSupported') }}</p>

@@ -126,7 +126,6 @@ export const codemirrorTheme = EditorView.theme({
     ".cm-live-preview-heading-6": {
         fontSize: "1.12em",
         fontWeight: "700",
-        color: "var(--color-text-3)"
     },
     ".cm-live-preview-bq-border::before": {
         content: "",
@@ -138,9 +137,14 @@ export const codemirrorTheme = EditorView.theme({
         textIndent: "0px",
         pointerEvents: "none"
     },
+    ".cm-live-preview-strong": {
+        fontWeight: "bold",
+    },
+    ".cm-live-preview-emphasis": {
+        fontStyle: "italic",
+    },
     ".cm-live-preview-strike": {
         textDecoration: "line-through",
-        color: "var(--color-text-3)"
     },
     ".cm-live-preview-inline-code": {
         backgroundColor: "var(--color-fill-2)",
