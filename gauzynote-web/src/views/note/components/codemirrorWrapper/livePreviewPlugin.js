@@ -2,8 +2,6 @@ import { ViewPlugin, Decoration, WidgetType, EditorView } from "@codemirror/view
 import { syntaxTree } from "@codemirror/language"
 import { RangeSetBuilder, StateField } from "@codemirror/state"
 import DOMPurify from 'dompurify';
-import {buildFilePath, extractRelativeFilePath} from "@/biz/file.js";
-import {isValidUrl} from "@/utils/index.js";
 
 // ════════════════════════════════════════════════════════════════
 // Widget 类型定义 — 用于 Decoration.replace 替换 Markdown 语法符号
@@ -223,8 +221,13 @@ function buildDecorations(view) {
   const selFrom = state.selection.main.from
   const selTo = state.selection.main.to
 
-  // 判断选区是否与 [from, to] 范围重叠；光标恰在 from 且无选区时返回 false，
-  // 避免切换模式后默认 (0,0) 选区误触发 isActive
+  /**
+   * 判断选区是否与 [from, to] 范围重叠；光标恰在 from 且无选区时返回 false，
+   * 避免切换模式后默认 (0,0) 选区误触发 isActive
+   * @param {number} from
+   * @param {number} to
+   * @returns {boolean}
+   */
   function inRange(from, to) {
     return selFrom <= to && selTo >= from - 1 && !(selFrom === selTo && selFrom === from - 1)
   }
@@ -330,13 +333,20 @@ function buildDecorations(view) {
           const parent = nodeRef.node.parent
           if (parent && (parent.type.name === 'StrongEmphasis' || parent.type.name === 'Emphasis')) {
             const isLink = insideLink(nodeRef.node)
-            const isActive = inRange(parent.from, parent.to)
+            let parentFrom = parent.from
+            let parentTo = parent.to
+            if (parent.parent && (parent.parent.type.name === 'StrongEmphasis' || parent.parent.type.name === 'Emphasis')){
+              parentFrom = parent.parent.from
+              parentTo = parent.parent.to
+            }
+            const isActive = inRange(parentFrom, parentTo)
+            const isStrong = parent.type.name === 'StrongEmphasis'
+            const units = isStrong ? 2 : 1
             if (!isActive) {
               builder.add(
                 nodeRef.from, nodeRef.to,
                 Decoration.replace({ widget: new InvisibleWidget() })
               )
-              const units = parent.type.name === 'Emphasis' ? 1 : 2
               if (isLink && nodeRef.to <= parent.to - units){
                 builder.add(parent.from + units, parent.to - units, Decoration.mark({ class: 'cm-live-preview-link-text' }))
               }
@@ -344,6 +354,11 @@ function buildDecorations(view) {
               if (isLink){
                 builder.add(parent.from, parent.to, Decoration.mark({ class: 'cm-live-preview-link-text' }))
               }
+            }
+            // 仅在首个 EmphasisMark（开标记）上添加粗体/斜体样式 decoration
+            if (nodeRef.from === parent.from) {
+              const styleClass = isStrong ? 'cm-live-preview-strong' : 'cm-live-preview-emphasis'
+              builder.add(parent.from, parent.to, Decoration.mark({ class: styleClass }))
             }
           }
         }
@@ -467,6 +482,10 @@ function buildDecorations(view) {
               if (isLink){
                 builder.add(parent.from, parent.to, Decoration.mark({ class: 'cm-live-preview-link-text' }))
               }
+            }
+            // 仅在首个 StrikethroughMark（开标记）上添加删除线样式 decoration
+            if (nodeRef.from === parent.from) {
+              builder.add(parent.from, parent.to, Decoration.mark({ class: 'cm-live-preview-strike' }))
             }
           }
         }

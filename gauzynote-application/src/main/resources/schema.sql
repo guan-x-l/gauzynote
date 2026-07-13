@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS `file` (
     `user_id` bigint(20) DEFAULT NULL COMMENT '用户id',
     `file_name` varchar(255) DEFAULT NULL COMMENT '文件名（存在重复）',
     `file_path` varchar(3000) DEFAULT NULL COMMENT '在服务器的存储路径',
-    `file_type` varchar(10) DEFAULT NULL COMMENT '文件类型',
+    `file_type` varchar(255) DEFAULT NULL COMMENT '文件类型',
     `file_size` int(11) DEFAULT NULL COMMENT '文件大小（单位：字节）',
     `storage_engine` varchar(255) DEFAULT NULL COMMENT '存储引擎（local：本地存储，oss：对象存储等）',
     `upload_time` datetime DEFAULT NULL COMMENT '上传时间',
