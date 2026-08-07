@@ -108,7 +108,7 @@ public class RecycleBinService {
         // 查询所有已删除的子孙节点（含自身）
         List<SysResourceNode> deletedNodes = this.sysResourceNodeDao.selectAllChildrenByNodeIdIncludeDeleted(rootNodeId);
 
-        // 收集文件ID并物理删除磁盘文件
+        // 收集文件ID并释放物理文件引用（引用计数归零时删除磁盘文件）
         List<Long> fileIdList = new ArrayList<>();
         for (SysResourceNode node : deletedNodes) {
             if (node.getRelatedId() != null && SysResourceNodeType.FILE.getCode().equals(node.getNodeType())) {

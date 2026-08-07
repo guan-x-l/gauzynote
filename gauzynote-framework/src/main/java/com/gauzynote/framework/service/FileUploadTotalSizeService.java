@@ -50,16 +50,20 @@ public class FileUploadTotalSizeService {
         }
     }
     /**
-     * 增加计数
+     * 增加计数（仅新建物理文件时调用）
+     *
+     * @param size 文件大小（字节）
      */
-    public void addTotalSize(MultipartFile file){
-        currentTotalSize.addAndGet(file.getSize());
+    public void addTotalSize(long size){
+        currentTotalSize.addAndGet(size);
     }
     /**
-     * 减少计数
+     * 减少计数（物理文件引用归零、彻底删除时调用）
+     *
+     * @param size 文件大小（字节）
      */
-    public void subtractTotalSize(MultipartFile file) {
-        currentTotalSize.addAndGet(-file.getSize());
+    public void subtractTotalSize(long size) {
+        currentTotalSize.addAndGet(-size);
     }
     /**
      * 总计数

@@ -16,16 +16,20 @@ public class SysFile implements Serializable {
      * 文件唯一标识ID
      */
     private Long fileId;
-/**
+    /**
      * 用户id
      */
     private Long userId;
+/**
+     * 关联file_storage表的storage_id
+     */
+    private Long storageId;
 /**
      * 文件名（存在重复）
      */
     private String fileName;
 /**
-     * 在服务器的存储路径
+     * 物理文件路径（来自file_storage关联查询，仅查询返回）
      */
     private String filePath;
 /**

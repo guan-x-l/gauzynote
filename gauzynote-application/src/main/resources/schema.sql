@@ -13,8 +13,8 @@ SET FOREIGN_KEY_CHECKS = 0;
 CREATE TABLE IF NOT EXISTS `file` (
                                         `file_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '文件唯一标识ID',
     `user_id` bigint(20) DEFAULT NULL COMMENT '用户id',
+    `storage_id` bigint(20) DEFAULT NULL COMMENT '关联file_storage表的storage_id',
     `file_name` varchar(255) DEFAULT NULL COMMENT '文件名（存在重复）',
-    `file_path` varchar(3000) DEFAULT NULL COMMENT '在服务器的存储路径',
     `file_type` varchar(255) DEFAULT NULL COMMENT '文件类型',
     `file_size` int(11) DEFAULT NULL COMMENT '文件大小（单位：字节）',
     `storage_engine` varchar(255) DEFAULT NULL COMMENT '存储引擎（local：本地存储，oss：对象存储等）',
@@ -22,6 +22,22 @@ CREATE TABLE IF NOT EXISTS `file` (
     `del_flag` char(1) DEFAULT '0' COMMENT '删除标志（0代表存在 2代表删除）',
     PRIMARY KEY (`file_id`) USING BTREE
     ) ENGINE=InnoDB AUTO_INCREMENT=90 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='文件表';
+
+
+-- ----------------------------
+-- Table structure for file_storage
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS `file_storage` (
+    `storage_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '物理文件唯一标识ID',
+    `user_id` bigint(20) DEFAULT NULL COMMENT '用户id',
+    `file_hash` varchar(255) DEFAULT NULL COMMENT '内容哈希（含扩展名），与物理文件一一对应',
+    `file_path` varchar(3000) DEFAULT NULL COMMENT '在服务器的存储路径',
+    `file_size` bigint(20) DEFAULT NULL COMMENT '文件大小（单位：字节）',
+    `ref_count` int(11) NOT NULL DEFAULT '0' COMMENT '引用该物理文件的file记录数',
+    `create_time` datetime DEFAULT NULL COMMENT '首次上传时间',
+    PRIMARY KEY (`storage_id`) USING BTREE,
+    UNIQUE KEY `uk_storage_user_hash` (`user_id`, `file_hash`) USING BTREE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='物理文件存储表';
 
 
 -- ----------------------------

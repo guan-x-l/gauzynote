@@ -62,6 +62,15 @@ public interface FileMapper {
     int deleteByIds(@Param("fileIds") List<Long> fileIds, @Param("userId") Long userId);
 
     /**
+     * 彻底删除：物理移除file记录（释放对物理文件的引用）
+     *
+     * @param fileIds 主键集合
+     * @param userId 用户ID
+     * @return 影响行数
+     */
+    int deleteRowsByIds(@Param("fileIds") List<Long> fileIds, @Param("userId") Long userId);
+
+    /**
      * 批量恢复（将del_flag从'2'改回'0'）
      *
      * @param fileIds 主键集合
