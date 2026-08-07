@@ -1,7 +1,8 @@
 -- ============================================================
 -- 方案B升级脚本：物理文件从 file 表迁移到 file_storage 表
 -- file 表通过 storage_id 引用 file_storage，file_storage 维护引用计数
--- 适用：已有存量数据的数据库；全新安装直接执行 schema.sql 即可
+-- 适用：已有存量数据的数据库；未迁移过或已按旧版脚本迁移过的库均可执行
+-- 全新安装直接执行 schema.sql 即可
 -- 建议执行前备份数据库
 -- ============================================================
 
@@ -18,10 +19,26 @@ CREATE TABLE IF NOT EXISTS `file_storage` (
     UNIQUE KEY `uk_storage_user_hash` (`user_id`, `file_hash`) USING BTREE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='物理文件存储表';
 
--- 2. 按 用户+内容哈希 回填 file_storage（同一哈希的 file 记录共享同一个物理文件）
+-- 2. 兼容已按旧版脚本迁移过的库：file_storage 缺少 file_size 列时补上
+SET @storage_size_col_exists = (
+    SELECT COUNT(*)
+    FROM information_schema.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'file_storage'
+      AND COLUMN_NAME = 'file_size'
+);
+SET @ddl = IF(@storage_size_col_exists = 0,
+    'ALTER TABLE `file_storage` ADD COLUMN `file_size` bigint(20) DEFAULT NULL COMMENT ''文件大小（单位：字节）'' AFTER `file_path`',
+    'SELECT 1');
+PREPARE stmt FROM @ddl;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- 3. 按 用户+内容哈希 回填 file_storage（同一哈希的 file 记录共享同一个物理文件）
 --    历史版本曾将图片存放在 images/ 目录、文件存放在 file/ 目录，
 --    同一哈希可能对应多个路径，这里取最小路径作为物理文件路径，其余视为重复副本
-INSERT INTO `file_storage` (`user_id`, `file_hash`, `file_path`, `file_size`, `ref_count`, `create_time`)
+--    INSERT IGNORE：已迁移过的库跳过已存在记录，避免唯一键冲突
+INSERT IGNORE INTO `file_storage` (`user_id`, `file_hash`, `file_path`, `file_size`, `ref_count`, `create_time`)
 SELECT f.user_id,
        SUBSTRING_INDEX(REPLACE(f.file_path, '\\', '/'), '/', -1) AS file_hash,
        MIN(f.file_path) AS file_path,
@@ -32,25 +49,33 @@ FROM `file` f
 WHERE f.file_path IS NOT NULL AND f.file_path <> ''
 GROUP BY f.user_id, file_hash;
 
--- 3. file 表增加 storage_id 并回填
-ALTER TABLE `file`
-    ADD COLUMN `storage_id` bigint(20) DEFAULT NULL COMMENT '关联file_storage表的storage_id' AFTER `user_id`;
+-- 4. file 表增加 storage_id（已存在则跳过）
+SET @file_storage_id_col_exists = (
+    SELECT COUNT(*)
+    FROM information_schema.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'file'
+      AND COLUMN_NAME = 'storage_id'
+);
+SET @ddl = IF(@file_storage_id_col_exists = 0,
+    'ALTER TABLE `file` ADD COLUMN `storage_id` bigint(20) DEFAULT NULL COMMENT ''关联file_storage表的storage_id'' AFTER `user_id`',
+    'SELECT 1');
+PREPARE stmt FROM @ddl;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
 
+-- 5. 回填 file.storage_id（已回填过的库重复执行只是重设为相同值）
 UPDATE `file` f
 JOIN `file_storage` s
     ON s.user_id = f.user_id
    AND s.file_hash = SUBSTRING_INDEX(REPLACE(f.file_path, '\\', '/'), '/', -1)
 SET f.storage_id = s.storage_id;
 
--- 4. 确认无误后，可删除 file 表冗余的 file_path 列（保留也不影响新代码）
--- ALTER TABLE `file` DROP COLUMN `file_path`;
-
--- file_storage 增加 file_size（用于上传总量统计扣减）
-ALTER TABLE `file_storage`
-    ADD COLUMN `file_size` bigint(20) DEFAULT NULL COMMENT '文件大小（单位：字节）' AFTER `file_path`;
-
--- 从 file 记录回填物理文件大小（同一物理文件内容相同，取任一条即可）
+-- 6. 回填物理文件大小（同一物理文件内容相同，取任一条即可；已迁移过的库补历史数据）
 UPDATE `file_storage` s
-    JOIN `file` f ON f.storage_id = s.storage_id
-    SET s.file_size = f.file_size
+JOIN `file` f ON f.storage_id = s.storage_id
+SET s.file_size = f.file_size
 WHERE s.file_size IS NULL;
+
+-- 7. 确认无误后，可删除 file 表冗余的 file_path 列（保留也不影响新代码）
+-- ALTER TABLE `file` DROP COLUMN `file_path`;
