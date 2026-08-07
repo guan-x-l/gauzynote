@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-import {computed, ref} from 'vue';
+import {computed} from 'vue';
 import {useLoading} from "@/components/feedback/GlobalLoading/useLoading.js";
 
 // 获取加载状态管理
@@ -28,9 +28,8 @@ const currentConfig = computed(() => {
   const lastInstanceId = Array.from(loadingInstances.value.keys()).pop();
   return loadingInstances.value.get(lastInstanceId);
 });
-const isAnyLoading = ref(false)
 // 判断是否有任何加载实例
-// const isAnyLoading = computed(() => loadingInstances.value.size > 0);
+const isAnyLoading = computed(() => loadingInstances.value.size > 0);
 </script>
 
 <style scoped lang="scss">

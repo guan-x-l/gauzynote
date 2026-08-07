@@ -11,6 +11,7 @@ import com.gauzynote.system.domain.entity.SysResourceNode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -37,6 +38,7 @@ public class ImageUploadService {
     @Value("${server.servlet.context-path}")
     private String contextPath;
 
+    @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> upload(MultipartFile file, Long parentNodeId) throws IOException {
         // 1. 基础校验（文件空、文件名空）
         checkFileEmpty(file);
@@ -51,10 +53,7 @@ public class ImageUploadService {
 //        String[] allowedExtensions = appConfigProperties.getUpload().getImage().getAllowedExtensions(); // 配置项：jpg,png,gif等
         checkImageFileType(file, allowedContentTypes, null);
 
-        // 4. 校验总上传大小
-        fileUploadTotalSizeService.checkedTotalSize(file);
-
-        // 5. 计算文件哈希
+        // 4. 计算文件哈希
         String fileHash;
         String extension = getFileExtension(fileName);
         try {
@@ -63,24 +62,30 @@ public class ImageUploadService {
             throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR.value(), MessageUtils.message("file.hash.calculate.fail"), e);
         }
 
-        // 6. 处理父节点逻辑（下沉到Service层）
+        // 5. 处理父节点逻辑（下沉到Service层）
         Long userId = SecurityUtils.getUserId();
         Long finalParentId = this.handleParentNode(parentNodeId);
 
-        // 7. 构建上传目录和文件路径（统一存储到 file/ 目录）
+        // 6. 构建上传目录和文件路径（统一存储到 file/ 目录）
         Path uploadDirPath = Paths.get(appConfigProperties.getUpload().getUploadOtherFileDir()).resolve(userId.toString());
         // 创建目录
         createDirIfNotExist(uploadDirPath);
         // 构建文件路径
         Path filePath = uploadDirPath.resolve(fileHash).normalize();
 
-        // 8. 提前校验路径合法性（关键：在数据库操作前校验）
+        // 7. 提前校验路径合法性（关键：在数据库操作前校验）
         if (!filePath.startsWith(uploadDirPath)) {
             throw new ServiceException(HttpStatus.BAD_REQUEST.value(), MessageUtils.message("illegal.path"));
         }
 
-        // 9. 数据库操作（插入SysFile和SysResourceNode，Service层已加事务）
-        SysFile sysFile = fileService.insertByFile(file, filePath, fileName);
+        // 8. 数据库操作（插入SysFile和SysResourceNode，Service层已加事务）
+        FileService.FileInsertResult insertResult = fileService.insertByFile(file, filePath, fileName);
+        SysFile sysFile = insertResult.getSysFile();
+
+        // 9. 仅新建物理文件时校验总上传大小（复用已有物理文件不额外占空间）
+        if (insertResult.isNewStorage()) {
+            fileUploadTotalSizeService.checkedTotalSize(file);
+        }
         SysResourceNode node = this.createResourceNode(sysFile, fileName, finalParentId, parentNodeId);
 
         // 10. 保存文件（此时路径已合法，无无效操作）
@@ -91,8 +96,10 @@ public class ImageUploadService {
             throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR.value(), MessageUtils.message("file.write.fail"), e);
         }
 
-        // 11. 更新总上传大小
-        fileUploadTotalSizeService.addTotalSize(file);
+        // 11. 更新总上传大小（仅新建物理文件时累加）
+        if (insertResult.isNewStorage()) {
+            fileUploadTotalSizeService.addTotalSize(file.getSize());
+        }
 
         // 12. 构建返回结果
         Map<String, Object> result = new HashMap<>(3);

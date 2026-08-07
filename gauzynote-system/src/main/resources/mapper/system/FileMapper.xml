@@ -5,8 +5,9 @@
     <resultMap type="com.gauzynote.system.domain.entity.SysFile" id="FileMap">
         <result property="fileId" column="file_id" jdbcType="INTEGER"/>
         <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="storageId" column="storage_id" jdbcType="INTEGER"/>
         <result property="fileName" column="file_name" jdbcType="VARCHAR"/>
-        <result property="filePath" column="file_path" jdbcType="VARCHAR"/>
+        <result property="filePath" column="storage_path" jdbcType="VARCHAR"/>
         <result property="fileType" column="file_type" jdbcType="VARCHAR"/>
         <result property="fileSize" column="file_size" jdbcType="INTEGER"/>
         <result property="storageEngine" column="storage_engine" jdbcType="VARCHAR"/>
@@ -16,18 +17,18 @@
 
     <!--查询单个-->
     <select id="selectById" resultMap="FileMap">
-        select
-*
-        from file
-        where file_id = #{fileId}
-          and user_id = #{userId}
-          and del_flag = '0'
+        select f.*, s.file_path as storage_path
+        from file f
+        left join file_storage s on s.storage_id = f.storage_id
+        where f.file_id = #{fileId}
+          and f.user_id = #{userId}
+          and f.del_flag = '0'
     </select>
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="fileId" useGeneratedKeys="true">
-        insert into file(user_id, file_name, file_path, file_type, file_size, storage_engine, upload_time)
-        values (#{userId}, #{fileName}, #{filePath}, #{fileType}, #{fileSize}, #{storageEngine}, sysdate())
+        insert into file(user_id, storage_id, file_name, file_type, file_size, storage_engine, upload_time)
+        values (#{userId}, #{storageId}, #{fileName}, #{fileType}, #{fileSize}, #{storageEngine}, sysdate())
     </insert>
 
     <!--通过主键修改数据-->
@@ -35,7 +36,6 @@
         update file
         <set>
             <if test="fileName != null and fileName != ''">file_name = #{fileName},</if>
-            <if test="filePath != null and filePath != ''">file_path = #{filePath},</if>
             <if test="fileType != null and fileType != ''">file_type = #{fileType},</if>
             <if test="fileSize != null">file_size = #{fileSize},</if>
             <if test="storageEngine != null and storageEngine != ''">storage_engine = #{storageEngine},</if>
@@ -66,6 +66,16 @@
             #{fileId}
         </foreach>
     </update>
+
+    <!--彻底删除：物理移除file记录（释放对物理文件的引用）-->
+    <delete id="deleteRowsByIds">
+        delete from file
+        where user_id = #{userId}
+          and file_id in
+        <foreach collection="fileIds" item="fileId" open="(" separator="," close=")">
+            #{fileId}
+        </foreach>
+    </delete>
 
     <!--批量恢复-->
     <update id="restoreByIds">

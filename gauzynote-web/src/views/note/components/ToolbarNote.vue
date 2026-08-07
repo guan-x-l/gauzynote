@@ -42,6 +42,20 @@ function handleViewModeClick() {
   }
   emit('viewModeClick', value)
 }
+// 下载为md文件
+function handleDownload() {
+  const content = props.note?.content || ''
+  const fileName = (props.note?.noteName || 'untitled') + '.md'
+  const blob = new Blob([content], { type: 'text/markdown' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = fileName
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
+}
 </script>
 
 <template>
@@ -72,11 +86,16 @@ function handleViewModeClick() {
         </template>
       </m-button>
     </Tooltip>
-<!--    <m-button type="base" size="small" shape="square">
-      <template #icon>
-        <icon-more-vertical size="20"></icon-more-vertical>
+    <dropdown position="bl">
+      <m-button type="base" size="small" shape="square" style="margin-left: 4px">
+        <template #icon>
+          <icon-more-vertical size="20"></icon-more-vertical>
+        </template>
+      </m-button>
+      <template #content>
+        <dropdown-option @click="handleDownload">{{t('action.download')}}</dropdown-option>
       </template>
-    </m-button>-->
+    </dropdown>
   </div>
 </div>
 </template>

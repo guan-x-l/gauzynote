@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gauzynote.system.mapper.FileStorageMapper">
+
+    <resultMap type="com.gauzynote.system.domain.entity.FileStorage" id="FileStorageMap">
+        <result property="storageId" column="storage_id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="fileHash" column="file_hash" jdbcType="VARCHAR"/>
+        <result property="filePath" column="file_path" jdbcType="VARCHAR"/>
+        <result property="fileSize" column="file_size" jdbcType="INTEGER"/>
+        <result property="refCount" column="ref_count" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="selectByUserIdAndFileHash" resultMap="FileStorageMap">
+        select *
+        from file_storage
+        where user_id = #{userId}
+          and file_hash = #{fileHash}
+    </select>
+
+    <!--新增；同用户同哈希已存在时引用计数+1-->
+    <insert id="upsertIncrement">
+        insert into file_storage(user_id, file_hash, file_path, file_size, ref_count, create_time)
+        values (#{userId}, #{fileHash}, #{filePath}, #{fileSize}, 1, sysdate())
+        on duplicate key update ref_count = ref_count + 1,
+                                file_size = COALESCE(file_size, #{fileSize})
+    </insert>
+
+    <!--锁定并查询，用于彻底删除时扣减引用计数-->
+    <select id="selectByIdsForUpdate" resultMap="FileStorageMap">
+        select *
+        from file_storage
+        where storage_id in
+        <foreach collection="storageIds" item="storageId" open="(" separator="," close=")">
+            #{storageId}
+        </foreach>
+        for update
+    </select>
+
+    <!--扣减引用计数-->
+    <update id="decrementRefCount">
+        update file_storage
+        set ref_count = ref_count - #{count}
+        where storage_id = #{storageId}
+    </update>
+
+    <!--删除引用计数为0的物理文件记录-->
+    <delete id="deleteById">
+        delete from file_storage
+        where storage_id = #{storageId}
+          and ref_count = 0
+    </delete>
+</mapper>

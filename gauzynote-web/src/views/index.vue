@@ -2,7 +2,7 @@
 //test
 import {onMounted, reactive, ref, useTemplateRef} from "vue";
 import {useRouter} from "vue-router";
-import {Message} from "@/components/index.js";
+import {Message, MLoading} from "@/components/index.js";
 import {useUserStore} from "@/store/index.js";
 import {useEventListener, useMergeState} from "@/hooks/index.js";
 import {formatBytes, processFileList} from "@/utils/index.js";
@@ -134,11 +134,18 @@ function handleSortStar({oldIndex}) {
   sortState.value = {oldIndex, newIndex: -1}
   Message.info(`开始拖拽: ${oldIndex}`)
 }
+function loading() {
+  const load =  MLoading.show()
+  setTimeout(()=>{
+    load.close()
+  }, 3000)
+}
 </script>
 
 <template>
   <div class="index-page" style="position: relative;">
     index
+    <button @click="loading">loading</button>
     <loading-wrapper  text="加载中">
     <p style="margin: 0 auto;width: 50%;">
       {{userinfo}}
