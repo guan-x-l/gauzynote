@@ -31,3 +31,4 @@ logging:
     com.gauzynote: debug
     # 打印SQL初始化的详细日志（建表、插数据、脚本执行等）
     org.springframework.jdbc.datasource.init:   DEBUG
+    org.apache.tomcat.util.http.parser.Cookie: off
