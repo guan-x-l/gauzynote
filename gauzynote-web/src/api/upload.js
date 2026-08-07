@@ -15,6 +15,7 @@ export function uploadImage(data) {
     return request({
         url: '/upload/image',
         method: 'POST',
+        timeout: 300000,
         data: data,
         headers: {
             'Content-Type': 'multipart/form-data'
@@ -26,6 +27,7 @@ export function uploadNetworkImage(data) {
     return request({
         url: '/upload/networkImage',
         method: 'POST',
+        timeout: 300000,
         data: data,
         headers: {
             'Content-Type': 'multipart/form-data'
@@ -37,10 +39,10 @@ export function uploadFile(data) {
     return request({
         url: '/upload/file',
         method: 'POST',
+        timeout: 300000,
         data: data,
         headers: {
             'Content-Type': 'multipart/form-data'
         },
     })
 }
-
