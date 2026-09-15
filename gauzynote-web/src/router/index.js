@@ -12,20 +12,25 @@ export const router = createRouter({
 
 // Injection Progress
 router.beforeEach(async (to, from, next) => {
+    const isMobileRoute = to.path === '/m' || to.path.startsWith('/m/')
+    const isLoginRoute = to.path === '/login' || to.path === '/m/login'
     if (getToken()) {
         // to.meta.title && store.dispatch('settings/setTitle', to.meta.title)
         /* has token*/
-        if (to.path === '/login') {
-            next({ path: '/' })
+        if (isLoginRoute) {
+            next({ path: to.path === '/m/login' ? '/m' : '/' })
         } else {
             next()
         }
     } else {
         // 没有token
-        if (to.path === '/login') {
+        if (isLoginRoute) {
             next()
         } else {
-            next(`/login?redirect=${encodeURIComponent(to.fullPath)}`) // 否则全部重定向到登录页
+            next({
+                path: isMobileRoute ? '/m/login' : '/login',
+                query: {redirect: to.fullPath}
+            }) // 否则全部重定向到登录页
         }
     }
 });

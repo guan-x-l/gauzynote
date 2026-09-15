@@ -1,6 +1,24 @@
 
 export const basicRoutes = [
     {
+        path: "/m/login",
+        name: "MobileLogin",
+        meta: {},
+        component: () => import("@/mobile/MobileLogin.vue")
+    },
+    {
+        path: "/m",
+        name: "MobileHome",
+        meta: {},
+        component: () => import("@/mobile/MobileHome.vue")
+    },
+    {
+        path: "/m/note/:id",
+        name: "MobileNote",
+        meta: {},
+        component: () => import("@/mobile/MobileNote.vue")
+    },
+    {
         path: "/login",
         name: "Login",
         meta: {},

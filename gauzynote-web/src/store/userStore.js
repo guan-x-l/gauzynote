@@ -18,12 +18,14 @@ const userType = computed(()=> UserType.getByCode(userinfo.value?.userType)?.get
 export const useUserStore = () => {
 
     const router = useRouter()
-    function updateUserinfo() {
-        getInfo().then(res=>{
+    async function updateUserinfo() {
+        const res = await getInfo()
+        if (res?.data) {
             userinfo.value = res.data
             localStorageUtil.set(userKeys.username, userinfo.value.username)
             isDefaultModifyPwd.value = res.isDefaultModifyPwd
-        })
+        }
+        return res
     }
 
     function signOut() {
