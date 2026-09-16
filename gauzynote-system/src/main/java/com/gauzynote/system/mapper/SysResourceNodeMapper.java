@@ -36,6 +36,18 @@ public interface SysResourceNodeMapper {
     SysResourceNode selectByRelatedId(Long relatedId);
 
     /**
+     * 通过关联资源、用户和节点类型查询单条数据。
+     *
+     * @param relatedId 关联资源ID
+     * @param userId 用户ID
+     * @param nodeType 节点类型
+     * @return 实例对象
+     */
+    SysResourceNode selectByRelatedIdAndUserIdAndNodeType(@Param("relatedId") Long relatedId,
+                                                           @Param("userId") Long userId,
+                                                           @Param("nodeType") String nodeType);
+
+    /**
      * @return 实例对象
      */
     SysResourceNode selectByParentIdAndNodeName(@Param("userId") Long userId,@Param("parentId") Long parentId, @Param("nodeName")String nodeName,@Param("nodeType")String nodeType);
@@ -154,4 +166,3 @@ public interface SysResourceNodeMapper {
     int restoreByIds(@Param("nodeIds") List<Long> nodeIds, @Param("userId") Long userId);
 
 }
-

@@ -47,6 +47,16 @@
           and del_flag = '0'
     </select>
     <!--查询单个-->
+    <select id="selectByRelatedIdAndUserIdAndNodeType" resultMap="SysResourceNodeMap">
+        select
+        *
+        from sys_resource_node
+        where related_id = #{relatedId}
+          and user_id = #{userId}
+          and node_type = #{nodeType}
+          and del_flag = '0'
+    </select>
+    <!--查询单个-->
     <select id="selectByParentIdAndNodeName" resultMap="SysResourceNodeMap">
         select
         *
@@ -168,4 +178,3 @@
         </foreach>
     </update>
 </mapper>
-

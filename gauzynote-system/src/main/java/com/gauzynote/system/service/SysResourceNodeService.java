@@ -276,7 +276,8 @@ public class SysResourceNodeService {
         editNote.setNoteId(note.getNoteId());
         editNote.setNoteName(noteName);
 
-        SysResourceNode node = sysResourceNodeDao.selectByRelatedId(note.getNoteId());
+        SysResourceNode node = sysResourceNodeDao.selectByRelatedIdAndUserIdAndNodeType(
+                note.getNoteId(), SecurityUtils.getUserId(), SysResourceNodeType.NOTE.getCode());
 
         if (node == null) {
             throw new ServiceException(HttpServletResponse.SC_BAD_REQUEST, MessageUtils.message("resource.node.not.exists"));
